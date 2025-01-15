@@ -178,6 +178,8 @@ for (( i = 0; i < $iterations; i++ )); do
     # Empty the databases so we don't save a bunch of old data repeatedly
     echo "emptying databases..."
     execute "$xdc" "./util/empty-databases.sh 'fusioncore'"
+    # Remove empty files
+    execute "$xdc" 'rm -r ~/FusionCore.deb ~/Sorcerers.deb ~/*-data/ ~/influx-data.tar.gz ~/postgres-data.sql'
 done
 
 echo "done running experiments"
