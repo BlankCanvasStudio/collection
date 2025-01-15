@@ -1,0 +1,55 @@
+#!/bin/bash
+
+set -e
+
+show_help() {
+    echo ""
+    echo "Usage: ./orchestration/stpo [flags] <xdc> <experiment name>"
+    echo ""
+    echo "This command wraps stopexp on the xdc"
+    echo ""
+    echo "-h/--help shows this menu"
+    echo ""
+    echo "experiment name: arguments passed to stopexp"
+    echo ""
+}
+
+
+xdc=""
+commands=""
+
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -h | --help)
+            show_help
+            shift
+            ;;
+
+        -x)
+            shift
+            xdc="$1"
+            shift
+            ;;
+        *)
+            if [ "$xdc" = "" ]; then
+                xdc="$1"
+            else 
+                commands="$commands '$1'"
+            fi
+            shift
+            ;;
+    esac
+done
+
+
+if [ "$xdc" = "" ]; then
+    echo "please specify an xdc"
+    exit 1
+elif [ "$commands" = "" ]; then
+    echo "please specify the experiment to stop from the xdc"
+    exit 1
+fi
+
+ssh "$xdc" "/share/stopexp $commands"
+

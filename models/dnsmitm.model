@@ -1,0 +1,18 @@
+from mergexp import *
+# create a topology named 'mitm'
+net = Network('mitm', addressing==ipv4, routing==static)
+nodes = [net.node(name, image == 'bullseye-edu') for name in [ 'attacker','auth','cache','client' ]]
+linklinkClC = net.connect([nodes[2],nodes[3]])
+linklinkClC[nodes[2]].socket.addrs = ip4('10.1.1.3/24')
+linklinkClC[nodes[3]].socket.addrs = ip4('10.1.1.2/24')
+lanlan0 = net.connect([nodes[0],nodes[1],nodes[2]])
+lanlan0[nodes[0]].socket.addrs = ip4('10.1.2.4/24')
+lanlan0[nodes[1]].socket.addrs = ip4('10.1.2.3/24')
+lanlan0[nodes[2]].socket.addrs = ip4('10.1.2.2/24')
+
+fusioncore = net.node('fusioncore', image == 'bullseye-edu', memory.capacity>=gb(8))
+
+for node in nodes:
+    net.connect([fusioncore, node])    
+
+experiment(net)

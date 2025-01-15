@@ -1,0 +1,184 @@
+#!/bin/bash
+
+set -e
+
+install_collection() {
+    xdc="$1"
+    ssh "$xdc" "sudo apt install -y git"
+    ssh "$xdc" "git clone https://gitlab.com/BlankCanvasStudio/discern-collection.git collection"
+}
+
+verify_collection_install() {
+    xdc="$1"
+    exists=$(ssh "$xdc" '[ -d collection ] && echo "File exists" || echo "File does not exist"')
+    if [ "$exists" = "File does not exist" ]; then 
+        install_collection "$xdc";
+    else
+        execute "$xdc" "git pull"
+    fi
+
+}
+
+execute() {
+    xdc="$1"
+    shift
+    ssh "$xdc" "cd collection && $@"
+}
+
+build_experiment() {
+    xdc="$1"
+    shift
+    echo "executing './startexp -s $@' on $xdc"
+    execute "$xdc" "./startexp -s $@"
+}
+
+exfiltrate_data() {
+    xdc="$1"
+    dest="$2"
+    iter="$3"
+    
+    final_resting="$destination/$iter"
+
+    # Save the data to the xdc
+    execute "$xdc" "./util/download/databases.sh"
+    # Make folder to save data in
+    mkdir -p "$final_resting"
+    # Download the data to the current machine
+    echo ""
+    echo "moving to dump to local machine"
+    echo ""
+    scp "$xdc:~/postgres-data.sql" "$final_resting"
+    scp "$xdc:~/influx-data.tar.gz" "$final_resting"
+}
+
+clear_text_files() {
+    xdc=$1
+
+    nodes=$(execute "$xdc" ./util/list-nodes.sh)
+
+    for node in $nodes; do
+        location="/var/log/discern/data"
+        execute $xdc "ssh $node 'sudo rm -rf $location/*'"
+    done
+}
+
+exfiltrate_text_files() {
+    xdc=$1
+    destination=$2
+    iteration=$3
+
+    final_resting="$destination/$iter"
+
+    nodes=$(execute "$xdc" ./util/list-nodes.sh)
+
+    for node in $nodes; do
+        location="/var/log/discern/data"
+        execute $xdc "scp -r $node:$location ~/$node-data"
+        scp -r "$xdc:~/$node-data" "$final_resting"
+    done
+}
+
+show_help() {
+    echo ""
+    echo "Usage: ./orchestration/run [flags] <xdc> <iterations> <save data location> <experiment name>"
+    echo ""
+    echo "This command automates taking experiment data and saving it to the local machine"
+    echo "startexp is meant to run on the XDC. This is runs on a local computer than can ssh into the xdc, wraps startexp, and exfiltrates the data"
+    echo ""
+    echo "-h/--help shows this menu"
+    echo ""
+    echo "xdc:             is the xdc you'd like to run the experiment through"
+    echo "iterations:      is how many number of data points you'd like to collect"
+    echo "location:        is where you'd like to save the data (in folders numbered after their iteration)"
+    echo "experiment name: the name of the experiment you'd like to run (synflood, dnsmitm, etc)"
+    echo ""
+}
+
+
+xdc=""
+commands=""
+iterations=""
+destination=""
+
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -h | --help)
+            show_help
+            shift
+            ;;
+
+        -x)
+            shift
+            xdc="$1"
+            shift
+            ;;
+        -i)
+            shift
+            iterations="$1"
+            shift
+            ;;
+        -d) 
+            shift
+            destination="$1"
+            shift
+            ;;
+        *)
+            if [ "$xdc" = "" ]; then
+                xdc="$1"
+            elif [ "$iterations" = "" ]; then
+                iterations="$1"
+            elif [ "$destination" = "" ]; then
+                destination="$1"
+            else 
+                command="$1"
+                while [[ $# -gt 1 ]]; do shift; done
+            fi
+            shift
+            ;;
+    esac
+done
+
+
+if [ "$xdc" = "" ]; then
+    echo "please specify an xdc"
+    exit 1
+elif [ "$iterations" = "" ]; then
+    echo "please specify a number of iterations"
+    exit 1
+elif [ "$destination" = "" ]; then
+    echo "please specify a destination for the data"
+    exit 1
+elif [ "$command" = "" ]; then
+    echo "please specify the experiment to run on the xdc"
+    exit 1
+fi
+
+
+# Verify all the software is on the XDC
+verify_collection_install "$xdc"
+
+# Make the folder to save the data in
+mkdir -p "$destination"
+
+# Build the experiment from the xdc
+build_experiment "$xdc" "$command"
+
+for (( i = 0; i < $iterations; i++ )); do
+    # Empty the databases, just in case
+    execute "$xdc" "./util/empty-databases.sh 'fusioncore'"
+    clear_text_files "$xdc" 
+    # Run an iteration of the experiment
+    echo "running experiment loop"
+    execute "$xdc" "./experiments/$command"
+    # Save the data to the local machine
+    echo "exfiltrating data..."
+    exfiltrate_data "$xdc" "$destination" "$i"
+    exfiltrate_text_files "$xdc" "$destination" "$i"
+    # Empty the databases so we don't save a bunch of old data repeatedly
+    echo "emptying databases..."
+    execute "$xdc" "./util/empty-databases.sh 'fusioncore'"
+done
+
+echo "done running experiments"
+

