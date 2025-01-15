@@ -34,7 +34,7 @@ run_exp() {
     sleep 120
 
     sudo kill $attackPid
-    remote_kill $attacker "flooder"
+    remote_kill attacker "flooder"
 
     sleep 30
 
