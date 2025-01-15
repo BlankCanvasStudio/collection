@@ -62,6 +62,17 @@ clear_text_files() {
     done
 }
 
+update_bash_sweep() {
+    xdc=$1
+    nodes=$(execute "$xdc" ./util/list-nodes.sh)
+    bash_loc="/var/log/discern/data/bash-data.txt"
+    cmd="sudo sed -i 's/^bashsweepinterval: 60/bashsweepinterval: 1/' $bash_loc"
+    for node in $nodes; do
+        execute $xdc "ssh $node '$cmd'"
+        execute $xdc "ssh $node 'sudo systemctl restart discern-bash-dump'"
+    done
+}
+
 exfiltrate_text_files() {
     xdc=$1
     destination=$2
@@ -163,6 +174,8 @@ mkdir -p "$destination"
 
 # Build the experiment from the xdc
 build_experiment "$xdc" "$command"
+
+update_bash_sweep "$xdc"
 
 for (( i = 0; i < $iterations; i++ )); do
     # Empty the databases, just in case
