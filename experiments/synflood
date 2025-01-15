@@ -2,6 +2,13 @@
 
 set -e
 
+remote_kill() {
+    node=$1
+    prog=$2
+    ssh $node "sudo kill \$(ps -e | grep $prog | awk '{print \$1}')"
+}
+
+
 run_exp() {
 
     if [ "$1" = "" ]; then
@@ -27,13 +34,17 @@ run_exp() {
     sleep 120
 
     sudo kill $attackPid
+    remote_kill $attacker "flooder"
 
     sleep 30
 
     # kill and record everything
     sudo kill $whilePid
+    # No remote kill cause this works
 
     sudo kill $tcpdumpPid
+    # repmote kill just to be safe
+    remote_kill client "tcpdump"
 
     scp client:/home/$(whoami)/results.pcap $1
 }

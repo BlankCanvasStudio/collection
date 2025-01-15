@@ -1,5 +1,11 @@
 #!/bin/bash
 
+remote_kill() {
+    node=$1
+    prog=$2
+    ssh $node "sudo kill \$(ps -e | grep $prog | awk '{print \$1}')"
+}
+
 get_mac_ip() {
     client="$1"
     mac=""
