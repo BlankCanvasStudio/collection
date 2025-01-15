@@ -5,7 +5,7 @@ set -e
 install_collection() {
     xdc="$1"
     ssh "$xdc" "sudo apt install -y git"
-    ssh "$xdc" "git clone https://gitlab.com/BlankCanvasStudio/discern-collection.git collection"
+    ssh "$xdc" "git clone https://github.com/BlankCanvasStudio/collection.git collection"
 }
 
 verify_collection_install() {

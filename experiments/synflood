@@ -51,5 +51,5 @@ ssh server "sudo sysctl -w net.ipv4.tcp_max_syn_backlog=10000"
 run_exp ./no-syn.pcap
 
 # pause to record another baseline
-sleep 10
+sleep 20
 
