@@ -66,9 +66,11 @@ update_bash_sweep() {
     xdc=$1
     nodes=$(execute "$xdc" ./util/list-nodes.sh)
     bash_loc="/var/log/discern/data/bash-data.txt"
-    cmd="sudo sed -i 's/^bashsweepinterval: 60/bashsweepinterval: 1/' $bash_loc"
+    cmd="sudo sed -i \'s_^bashsweepinterval: 60_bashsweepinterval: 10_\' $bash_loc"
+
     for node in $nodes; do
-        execute $xdc "ssh $node '$cmd'"
+        echo "execute $xdc 'ssh $node $cmd'"
+        execute $xdc "ssh $node $cmd"
         execute $xdc "ssh $node 'sudo systemctl restart discern-bash-dump'"
     done
 }
