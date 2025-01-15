@@ -111,5 +111,8 @@ done
 
 sudo kill $etter_pid
 
+remote_kill attacker "ettercap"
+ssh cache "sudo systemctl stop named"
+
 sleep 15
 
