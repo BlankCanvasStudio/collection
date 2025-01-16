@@ -98,8 +98,8 @@ create_client() {
 
     cd ~/byob/byob
 
-    tmp=$(python3 ./client.py $server_ip $port $modules)
-    filename=$(echo $tmp | tail -2 | sed 's#^[^/]*##' | sed 's#)$##')
+    tmp=$(python3 ./client.py $server_ip $port $modules | tail -2)
+    filename=$(echo $tmp | sed 's#^[^/]*##' | sed 's#)$##')
 
     echo $filename
 }
