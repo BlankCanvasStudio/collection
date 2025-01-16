@@ -100,8 +100,8 @@ create_client() {
 
     filename=$( \
         python3 ./client.py $server_ip $port $modules \
-            | tail -2 \ 
-            | sed 's|^[^/]*||' \
+            | tail -2 \
+            | sed 's#^[^/]*##' \
             | sed 's#)$##' \
     )
 
