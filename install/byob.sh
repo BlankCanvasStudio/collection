@@ -134,5 +134,7 @@ for node in $nodes; do
     scp $client_file $node:byob-client
     ssh $node "sudo mv ~/byob-client /usr/local/bin"
     ssh $node "sudo chmod +x /usr/local/bin/byob-client"
+    ssh $node "sudo apt -y install python3-pip"
+    ssh $node "pip install colorama numpy && sudo pip install colorama numpy"
 done
 
