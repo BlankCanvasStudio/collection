@@ -148,7 +148,8 @@ up to read from these containers.
 
 ## What All the Files Do
 
-`install` contains the scripts which install the data sorcerers and fusion core into the topology
+`install` contains the scripts which install the data sorcerers, fusion core, and byob into the 
+topology **FROM THE XDC**
 
 `./install/core.sh <node>` can be used to install the fusion core on a specific node. But you'll 
 need to alter the configs on all the nodes running the Data Sorcerers. To see details on all the 
