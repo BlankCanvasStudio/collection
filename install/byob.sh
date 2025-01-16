@@ -97,16 +97,16 @@ create_client() {
     modules="$@"
 
     cd ~/byob/byob
+
     filename=$( \
-            python3 ./client.py --freeze $server_ip $port $modules \
-                | tail -2 \
-                | sed 's#.*\/##' \
-                | sed 's#)##'  \
+        python3 ./client.py $server_ip $port $modules \
+            | tail -2 \ 
+            | sed 's|^[^/]*||' \
+            | sed 's#)$##' \
     )
 
     echo $filename
 }
-
 
 
 echo ""
@@ -131,8 +131,7 @@ echo ""
 echo "copying client binary"
 echo ""
 for node in $nodes; do
-    scp ./dist/$client_file $node:~
-    ssh $node "sudo mv ~/byob-client /usr/local/bin"
+    scp $client_file $node:byob-client
+    ssh $node "sudo mv ~/$byob-client /usr/local/bin"
 done
-
 
