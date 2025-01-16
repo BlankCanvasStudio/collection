@@ -120,7 +120,7 @@ client_file=$(create_client $server_ip $port $modules)
 popd
 root=$(echo $client_file | sed 's|^/||;s|/.*||')
 if [ ! -f $root ]; then
-    client_file="~/byob/byob/$client_file"
+    client_file="$HOME/byob/byob$client_file"
 fi
 
 nodes=$(./util/list-nodes.sh)
