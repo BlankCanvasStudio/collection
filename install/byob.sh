@@ -53,14 +53,6 @@ while [[ $# -gt 0 ]]; do
 done
 
 
-
-
-if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-    show_help
-    shift
-fi
-
-
 if [ "$server_ip" = "" ] || [ "$port" = "" ]; then
     echo "not enough arguments. requires c&c ip, and port"
     echo ""
@@ -68,6 +60,11 @@ if [ "$server_ip" = "" ] || [ "$port" = "" ]; then
     exit 1
 fi
 
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    show_help
+    shift
+fi
 
 
 remote_exec() {
