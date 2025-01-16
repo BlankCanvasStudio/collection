@@ -84,6 +84,7 @@ install() {
             git clone https://github.com/STEELISI/byob.git byob
     fi
     cd ~/byob/byob
+    git pull
     pip install -r ./requirements.txt
 }
 
@@ -130,7 +131,7 @@ echo ""
 echo "copying client binary"
 echo ""
 for node in $nodes; do
-    scp ./dist/$client_file $node:~/byob-client
+    scp ./dist/$client_file $node:~
     ssh $node "sudo mv ~/byob-client /usr/local/bin"
 done
 
