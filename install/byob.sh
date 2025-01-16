@@ -132,6 +132,6 @@ echo "copying client binary"
 echo ""
 for node in $nodes; do
     scp $client_file $node:byob-client
-    ssh $node "sudo mv ~/$byob-client /usr/local/bin"
+    ssh $node "sudo mv ~/byob-client /usr/local/bin"
 done
 
