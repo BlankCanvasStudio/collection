@@ -76,7 +76,6 @@ remote_exec() {
 
 
 install() {
-    pushd .
     if [ ! -f ~/byob/byob/requirements.txt ]; then
             cd ~
             sudo apt -y update
@@ -86,7 +85,6 @@ install() {
     fi
     cd ~/byob/byob
     pip install -r ./requirements.txt
-    popd
 }
 
 
@@ -97,8 +95,6 @@ create_client() {
     shift
     modules="$@"
 
-    pushd .
-
     cd ~/byob/byob
     filename=$( \
             python3 ./client.py --freeze $server_ip $port $modules \
@@ -107,21 +103,32 @@ create_client() {
                 | sed 's#)##'  \
     )
 
-    popd 
-
     echo $filename
 }
 
 
 
+echo ""
+echo "installing requirements"
+echo ""
+pushd .
 install
+popd
 
+echo ""
+echo "building client binary..."
+echo ""
+pushd .
 client_file=$(create_client $server_ip $port $modules)
+popd
 
 nodes=$(./util/list-nodes.sh)
 
 cd ~/byob/byob
 
+echo ""
+echo "copying client binary"
+echo ""
 for node in $nodes; do
     scp ./dist/$client_file $node:~/byob-client
     ssh $node "sudo mv ~/byob-client /usr/local/bin"
