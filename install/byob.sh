@@ -65,6 +65,7 @@ if [ "$server_ip" = "" ] || [ "$port" = "" ]; then
     echo "not enough arguments. requires c&c ip, and port"
     echo ""
     show_help
+    exit 1
 fi
 
 
