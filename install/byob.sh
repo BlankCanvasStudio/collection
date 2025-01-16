@@ -77,6 +77,7 @@ remote_exec() {
 
 
 install() {
+    pushd .
     if [ ! -f ~/byob/byob/requirements.txt ]; then
             cd ~
             sudo apt -y update
@@ -86,6 +87,7 @@ install() {
     fi
     cd ~/byob/byob
     pip install -r ./requirements.txt
+    popd
 }
 
 
@@ -96,14 +98,17 @@ create_client() {
     shift
     modules="$@"
 
-    cd ~/byob/byob
+    pushd .
 
+    cd ~/byob/byob
     filename=$( \
             python3 ./client.py --freeze $server_ip $port $modules \
                 | tail -2 \
                 | sed 's#.*\/##' \
                 | sed 's#)##'  \
     )
+
+    popd 
 
     echo $filename
 }
