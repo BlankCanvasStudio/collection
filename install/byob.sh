@@ -98,12 +98,8 @@ create_client() {
 
     cd ~/byob/byob
 
-    filename=$( \
-        python3 ./client.py $server_ip $port $modules \
-            | tail -2 \
-            | sed 's#^[^/]*##' \
-            | sed 's#)$##' \
-    )
+    tmp=$(python3 ./client.py $server_ip $port $modules)
+    filename=$(echo $tmp | tail -2 | sed 's#^[^/]*##' | sed 's#)$##')
 
     echo $filename
 }
@@ -122,6 +118,10 @@ echo ""
 pushd .
 client_file=$(create_client $server_ip $port $modules)
 popd
+root=$(echo $client_file | sed 's|^/||;s|/.*||')
+if [ ! -f $root ]; then
+    client_file="~/byob/byob/$client_file"
+fi
 
 nodes=$(./util/list-nodes.sh)
 
