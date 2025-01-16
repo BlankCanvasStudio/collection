@@ -6,6 +6,7 @@ server_ip=""
 port=""
 modules=""
 location="/usr/local/bin"
+help=false
 
 
 show_help() {
@@ -30,7 +31,7 @@ show_help() {
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -h | --help)
-            show_help
+            help=true
             shift
             ;;
         -l)
@@ -61,7 +62,7 @@ if [ "$server_ip" = "" ] || [ "$port" = "" ]; then
 fi
 
 
-if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+if [ "$help" = "true" ]; then
     show_help
     shift
 fi
