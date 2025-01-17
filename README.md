@@ -165,5 +165,12 @@ fusioncore.
 
 `./analyze/*` show examples of data manipulation post hoc.
 
+`./util/byossh` executes command on remote nodes connected to the byob server running on the host 
+machine
+
+`./util/list-nodes.sh` lists all the nodes connect to the xdc this script is run on
+
+`./util/empty-databases.sh` empties the databases connected to fusioncore on the xdc this from is
+run from. Useful when taking repeated experiments
 
 
