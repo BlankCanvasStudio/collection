@@ -41,6 +41,7 @@ while [[ $# -gt 0 ]]; do
                 shift
             else 
                 command="$command $1"
+                shift "$#"
             fi
             ;;
     esac
