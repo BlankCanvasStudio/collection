@@ -136,6 +136,7 @@ for node in $nodes; do
     ssh $node "sudo chmod +x /usr/local/bin/byob-client"
 
     # Install python deps if its not a static binary
+    echo "ends in: ${client_file: -3}"
     if [ "${client_file: -3}" = ".py" ]; then
         (
             ssh $node "sudo apt -y install python3-pip"
