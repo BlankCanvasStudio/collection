@@ -79,7 +79,7 @@ install() {
     if [ ! -f ~/byob/byob/requirements.txt ]; then
             cd ~
             sudo apt -y update
-            sudo apt -y install git gcc python3-dev build-essential
+            sudo apt -y install git gcc python3-dev build-essential socat
             sudo apt -y update --fix-missing
             git clone https://github.com/STEELISI/byob.git byob
     fi
