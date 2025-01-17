@@ -137,8 +137,12 @@ for node in $nodes; do
 
     # Install python deps if its not a static binary
     if [ "${client_file: -3}" = ".py" ]; then
-        ssh $node "sudo apt -y install python3-pip"
-        ssh $node "pip install colorama numpy && sudo pip install colorama numpy"
+        (
+            ssh $node "sudo apt -y install python3-pip"
+            ssh $node "pip install colorama numpy && sudo pip install colorama numpy"
+        ) &
     fi
 done
+
+wait
 
