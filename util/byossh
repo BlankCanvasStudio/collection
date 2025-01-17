@@ -38,10 +38,10 @@ while [[ $# -gt 0 ]]; do
         *)
             if [ "$node" = "" ]; then
                 node="$1"
+                shift
             else 
-                command="$@"
+                command="$command $1"
             fi
-            shift
             ;;
     esac
 done
