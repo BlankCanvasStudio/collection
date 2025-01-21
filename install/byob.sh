@@ -92,9 +92,11 @@ install() {
             sudo apt -y update --fix-missing
             git clone https://github.com/STEELISI/byob.git byob
     fi
-    cd $byob
-    git pull
-    pip install -r ./requirements.txt
+    pushd .
+        cd $byob
+        git pull
+        pip install -r ./requirements.txt
+    popd .
 }
 
 
@@ -105,12 +107,14 @@ create_client() {
     shift
     modules="$@"
 
-    cd $byob
+    pushd .
+        cd $byob
 
-    tmp=$(python3 ./client.py $server_ip $port $modules | tail -2)
-    filename=$(echo $tmp | sed 's#^[^/]*##' | sed 's#)$##')
+        tmp=$(python3 ./client.py $server_ip $port $modules | tail -2)
+        filename=$(echo $tmp | sed 's#^[^/]*##' | sed 's#)$##')
 
-    echo $filename
+        echo $filename
+    popd
 }
 
 
@@ -134,27 +138,31 @@ fi
 
 nodes=$(./util/list-nodes.sh)
 
-cd $byob
+pushd .
 
-echo ""
-echo "copying client binary"
-echo ""
-for node in $nodes; do
-    scp $client_file $node:byob-client
-    ssh $node "sudo mv ~/byob-client /usr/local/bin"
-    ssh $node "sudo chmod +x /usr/local/bin/byob-client"
+    cd $byob
 
-    # Install python deps if its not a static binary
-    echo "ends in: ${client_file: -3}"
-    if [ "${client_file: -3}" = ".py" ]; then
-        (
-            ssh $node "sudo apt -y install python3-pip"
-            ssh $node "pip install colorama numpy && sudo pip install colorama numpy"
-        ) &
-    fi
-done
+    echo ""
+    echo "copying client binary"
+    echo ""
+    for node in $nodes; do
+        scp $client_file $node:byob-client
+        ssh $node "sudo mv ~/byob-client /usr/local/bin"
+        ssh $node "sudo chmod +x /usr/local/bin/byob-client"
 
-wait
+        # Install python deps if its not a static binary
+        echo "ends in: ${client_file: -3}"
+        if [ "${client_file: -3}" = ".py" ]; then
+            (
+                ssh $node "sudo apt -y install python3-pip"
+                ssh $node "pip install colorama numpy && sudo pip install colorama numpy"
+            ) &
+        fi
+    done
+
+    wait
+
+popd
 
 if [ ! "$cANDc" = "" ]; then
     echo ""
