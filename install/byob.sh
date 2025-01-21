@@ -113,8 +113,10 @@ create_client() {
         tmp=$(python3 ./client.py $server_ip $port $modules | tail -2)
         filename=$(echo $tmp | sed 's#^[^/]*##' | sed 's#)$##')
 
-        echo $filename
     popd
+    echo ""
+    echo ""
+    echo $filename
 }
 
 
@@ -129,12 +131,14 @@ echo ""
 echo "building client binary..."
 echo ""
 pushd .
-client_file=$(create_client $server_ip $port $modules)
+raw=$(create_client $server_ip $port $modules)
+echo -e "last 2:\n$(echo $raw | tail -2)"
+client_file=$(echo $raw | tail -1)
 popd
-root=$(echo $client_file | sed 's|^/||;s|/.*||')
-if [ ! -f $root ]; then
-    client_file="$byob/$client_file"
-fi
+# root=$(echo $client_file | sed 's|^/||;s|/.*||')
+# if [ ! -f $root ]; then
+#     client_file="$byob/$client_file"
+# fi
 
 nodes=$(./util/list-nodes.sh)
 
