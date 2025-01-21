@@ -184,6 +184,7 @@ if [ ! "$cANDc" = "" ]; then
     ssh $cANDc "sudo mv ~/byossh /usr/local/bin"
     ssh $cANDc "sudo chmod +x /usr/local/bin/byossh"
 
+    ssh $cANDc "rm -r ~/byob || true"
     scp -r $byob "$cANDc":byob
 fi
 
