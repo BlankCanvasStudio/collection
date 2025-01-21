@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 
 remote_kill() {
     node=$1
