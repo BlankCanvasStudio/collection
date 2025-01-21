@@ -107,13 +107,11 @@ create_client() {
     shift
     modules="$@"
 
-    pushd .
-        cd $byob
+    cd $byob
 
-        tmp=$(python3 ./client.py $server_ip $port $modules | tail -2)
-        filename=$(echo $tmp | sed 's#^[^/]*##' | sed 's#)$##')
+    tmp=$(python3 ./client.py $server_ip $port $modules | tail -2)
+    filename=$(echo $tmp | sed 's#^[^/]*##' | sed 's#)$##')
 
-    popd
     echo ""
     echo ""
     echo $filename
