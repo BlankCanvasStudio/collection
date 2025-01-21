@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "ending portscanning experiment"
+echo "ending uploading experiment"
 
 # Incase it recycles commands between experiments
 ssh attacker "rm ~/byob/database.db"
