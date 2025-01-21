@@ -7,7 +7,7 @@ function usage {
     echo -e "\t-p create an experiment in the given project"
     echo -e "\t-s set up nodes for the lab after the experiment is ready"
     echo -e "\t\twill exclude runlab commandsfrom fusioncore data"
-    echo -e "\t-x executes ./experiments/<lab> and exfiltrates the data to the xdc"
+    echo -e "\t-x executes ./experiments/<lab>/run and exfiltrates the data to the xdc"
     return
 }
 
@@ -291,9 +291,13 @@ if [ $run -eq 1 ] ; then
     ./util/empty-databases.sh fusioncore
     runlab $org $lab 
     ./util/empty-databases.sh fusioncore
+    if [ -f ./experiments/$lab/install ]; then
+        ./experiments/$lab/install
+    fi
+    ./util/empty-databases.sh fusioncore
 fi
 
 if [ "$exfiltrate" = "true" ]; then
-    ./experiments/$lab
+    ./experiments/$lab/run
     ./util/download/databases.sh fusioncore
 fi

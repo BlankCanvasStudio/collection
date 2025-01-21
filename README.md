@@ -25,23 +25,24 @@ To start an experiment, you should run:
 in the root of this repository. 
 
 2 files are needed to implement a new experiment: `models/<exp name>.model` and 
-`experiments/<exp name>`.
+`experiments/<exp name>/run`.
 
 
 `models/<exp name>.model` is the topology for your experiment and **NEEDS** to contain a node 
 named `fusioncore`, which has a link connecting it to every node you'd like to record data from in
 your topology. All the data sensors are hard coded to save their data to a node with this name.
 
-`experiments/<exp name>` is an executable which orchestrates the experiment from the xdc. You 
+`experiments/<exp name>/run` is an executable which orchestrates the experiment from the xdc. You 
 don't need to run anything related to the sensors in this file, just the experiment you'd like to 
 record. All the data collection is handled by `startexp`.
 
 `startexp` handles installing the sensors, building the fusion core, starting everything, and 
 exfiltrating the data. 
 
-Once `experiments/<exp name>` has exited, `startexp` will automatically save the data from the 
-fusioncore to `~/postgres-data.sql` and `~/influx-data.tar.gz` in your xdc. If you need to take 
-more than one point of data, its up to you to properly manage these files.
+Once `experiments/<exp name>/run` has exited, if `startexp -x` was specified, `startexp` will 
+automatically save the data from the fusioncore to `~/postgres-data.sql` and `~/influx-data.tar.gz` 
+in your xdc. If you need to take more than one point of data, its up to you to properly manage 
+these files.
 
 If you'd like to analyze your data after an experiment, run:
 
@@ -79,8 +80,8 @@ of the FusionCore to <data_location> on the local machine, and loop this <iterat
 can easily take data of repeated trials.
 
 So you should only need to run 
-`./orchestration/run <xdc> <iterations> <data_location> <experiment & args for startexp>` on your local machine 
-and the script will manage everything for you.
+`./orchestration/run <xdc> <iterations> <data_location> <experiment>` on your local machine and 
+the script will manage everything for you.
 
 Heres a sample command:
 
@@ -107,7 +108,14 @@ runlab <name>
 
 will install the packages for that lab on the topology. No extra files are required for this.
 
-These two steps can be combined into one step with:
+If `./experiments/<name>/install` exists, extra software is required to run this experiment (namely byob). 
+To install this extra software, run:
+
+```
+./exeriments/<name>/install
+```
+
+These three steps can be combined into one step with:
 
 ```
 ./startexp -s <name>
@@ -122,7 +130,7 @@ Then you can mess with your experiment however you see fit.
 To run an experiment script, simply execute:
 
 ```
-./experiments/<name>
+./experiments/<name>/run
 ```
 
 The steps above can be automated into one command with:
