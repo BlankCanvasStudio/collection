@@ -1,16 +1,2 @@
 #!/bin/bash
 
-remote_kill() {
-    node=$1
-    prog=$2
-    ssh $node "sudo kill \$(ps -e | grep $prog | awk '{print \$1}')"
-}
-
-remote_kill compromised python
-
-remote_kill compromised byob-client
-
-remote_kill attacker server
-
-remote_kill attacker python
-

@@ -153,6 +153,11 @@ The first (and only) argument to `./util/setup-databases.sh` is a folder which c
 local machine which contain the data in these snapshots. The files in `analysis` are currently set 
 up to read from these containers.
 
+It can be useful to run a shut-down script between trials that you wouldn't like recorded in the 
+data. `orchestration/run` will automatically run `./experiments/<name>/end` after its collected 
+data, if the file exists and cause any errors if it doesn't. `startlab` doesn't have an equivalent
+functionality, but you can always run the scripts by hand.
+
 
 ## What All the Files Do
 
