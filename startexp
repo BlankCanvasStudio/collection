@@ -93,7 +93,7 @@ PATH=$PATH:/share
 # load util functions
 . $SCRIPT_DIR/functions
 
-checklab $labpath $lab || locallab $labpath $lab
+(checklab $labpath $lab || locallab $labpath $lab)
 DEBUG=${DEBUG:-0}
 RETRYSLEEP=3
 
