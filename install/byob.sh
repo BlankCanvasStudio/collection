@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -xe
 
 server_ip=""
 port=""
