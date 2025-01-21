@@ -166,6 +166,8 @@ if [ ! "$cANDc" = "" ]; then
     ssh $cANDc "sudo apt -y update --fix-missing"
 
     scp ./util/byossh "$cANDc":byossh
+    ssh $cANDc "sudo mv ~/byossh /usr/local/bin"
+    ssh $cANDc "sudo chmod +x /usr/local/bin/byossh"
 
     scp -r $byob "$cANDc":byob
 fi

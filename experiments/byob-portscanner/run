@@ -14,12 +14,19 @@ attackerPid=$1
 
 sleep 5 # let the server boot
 
-ssh victim "byob-client" &
-victimPid=$!
+ssh compromised "byob-client" &
+compromisedPid=$!
+
 
 sleep 2 # let the victim connect
 
-ssh attacker "byossh portscanner 10.10.10.3 >> /tmp/port-results && cat /tmp/port-results"
 
-sleep 15
+ssh attacker "byossh -t 10 compromised portscanner 10.10.10.3 >> /tmp/port-results && cat /tmp/port-results"
+
+sleep 5
+
+ssh attacker "byossh -t 10 compromised portscanner 10.10.10.4 >> /tmp/port-results && cat /tmp/port-results"
+
+
+sleep 15 # Make sure all the data downloads
 
