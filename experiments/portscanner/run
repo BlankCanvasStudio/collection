@@ -1,8 +1,5 @@
 #!/bin/bash
 
-set -x
-
-
 remote_kill() {
     node=$1
     prog=$2

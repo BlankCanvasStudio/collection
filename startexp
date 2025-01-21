@@ -1,7 +1,5 @@
 #!/usr/bin/bash
 
-set -x
-
 function usage {
     echo $(basename $0) [-n expname] [-o] [-p projname] [-s] labname
     echo -e "\t-n assign the given name to the experiment, instead of labname"
