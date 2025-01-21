@@ -96,7 +96,7 @@ install() {
         cd $byob
         git pull
         pip install -r ./requirements.txt
-    popd .
+    popd
 }
 
 
