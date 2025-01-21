@@ -131,6 +131,7 @@ echo ""
 pushd .
 raw=$(create_client $server_ip $port $modules)
 client_file="$byob$(echo $raw | head -1)"
+echo "client file: $client_file"
 popd
 # root=$(echo $client_file | sed 's|^/||;s|/.*||')
 # if [ ! -f $root ]; then
