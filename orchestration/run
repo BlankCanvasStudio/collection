@@ -190,6 +190,10 @@ for (( i = 0; i < $iterations; i++ )); do
     echo "exfiltrating data..."
     exfiltrate_data "$xdc" "$destination" "$i"
     exfiltrate_text_files "$xdc" "$destination" "$i"
+    # If there are any end of experiment comamnds to run that you don't want record
+    if [ -f ./experiments/$command/end ]; then
+        ./experiments/$command/end
+    fi
     # Empty the databases so we don't save a bunch of old data repeatedly
     echo "emptying databases..."
     execute "$xdc" "./util/empty-databases.sh 'fusioncore'"
