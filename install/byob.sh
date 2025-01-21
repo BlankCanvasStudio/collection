@@ -22,7 +22,7 @@ show_help() {
     echo -e "-h/--help shows this menu"
     echo -e "-l sets the location to install the client binary"
     echo -e "\tdefaults to /usr/local/bin/byob-client"
-    echo -e "-cc sets the command and control server to install byob on"
+    echo -e "-cc sets the server to install the command and control programs on"
     echo -e ""
     echo -e "<xdc> is the xdc you'd like to install byob on"
     echo -e "<C&C ip> is the ip the compromised machines should connect to to reach your command and control server"
