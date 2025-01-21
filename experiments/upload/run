@@ -13,10 +13,10 @@ attackerPid=$1
 
 sleep 10 # let the server boot
 
-ssh victim1 "byob-client" &
+ssh victim1 "sudo byob-client" &
 victimPid=$!
 
-ssh victim2 "byob-client" &
+ssh victim2 "sudo byob-client" &
 victimPid=$!
 
 
