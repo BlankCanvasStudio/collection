@@ -1,0 +1,48 @@
+#!/bin/bash
+
+install=false
+
+show_help() {
+    echo "Usage: ./util/byoserver [flags]"
+    echo -e ""
+    echo -e "This command starts a byob server on the xdc"
+    echo -e ""
+    echo -e "-h/--help shows this menu"
+    echo -e "-i installs byob-client onto all the nodes attached to this xdc before running the server"
+    echo -e "\tthis only needs to be run once"
+    echo -e ""
+    echo -e "[nodes] are optional. They specify the nodes to install the sensors on. If none are given, the sensors are installed on all the nodes"
+    echo -e ""
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -h | --help)
+            show_help
+            shift
+            ;;
+        -i)
+            shift
+            install="true"
+            shift
+            ;;
+
+        *)
+            echo "unknown paramter: $1"
+            echo "exiting"
+            exit 1
+            ;;
+    esac
+done
+
+
+xdc_ip=$(ip -br addr | grep wg | awk '{print $3}' | cut -d'/' -f1)
+
+
+if [ "$install" = "true" ]; then
+    ./install/byob.sh xdc_ip 1337
+fi
+
+cd ~/byob/byob
+./server.py
+
