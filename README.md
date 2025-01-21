@@ -179,7 +179,8 @@ fusioncore.
 `./analyze/*` show examples of data manipulation post hoc.
 
 `./util/byoserver` executes the byob server on the xdc and optionally builds and installs the 
-byob-client binary on all the nodes in a materialization
+byob-client binary on all the nodes in a materialization. Installing on the materialization only 
+needs to be done once.
 
 `./util/byossh` executes command on remote nodes connected to the byob server running on the host 
 machine
