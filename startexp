@@ -11,6 +11,18 @@ function usage {
     return
 }
 
+function locallab {
+    labpath=$1
+    lab=$2
+
+    if [ ! -f ./models/$lab.model ]; then
+        echo "lab model file ./models/$lab.model doesn't exist"
+    fi
+    if [ ! -f ./experiments/$lab/run ]; then
+        echo "lab executable file ./experiments/$lab/run doesn't exist"
+    fi
+}
+
 OPTSTRING=":n:op:s:x"
 
 # specify labname, assume password is stored in pass.txt file or $PASSWORD 
@@ -79,7 +91,7 @@ PATH=$PATH:/share
 # load util functions
 . $SCRIPT_DIR/functions
 
-checklab $labpath $lab
+checklab $labpath $lab || locallab $labpath $lab
 DEBUG=${DEBUG:-0}
 RETRYSLEEP=3
 
