@@ -17,7 +17,7 @@ ssh compromised "byob-client" &
 compromisedPid=$!
 
 
-rleep 5 # let the victim connect
+sleep 5 # let the victim connect
 
 
 ssh attacker "byossh -t 10 compromised portscanner 10.10.10.3 >> /tmp/port-results && cat /tmp/port-results"
