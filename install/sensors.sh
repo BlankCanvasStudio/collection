@@ -28,7 +28,7 @@ if [ "$nodes" = "" ]; then
 fi
 
 # Copy the deb from the package registry
-curl "https://gitlab.com/api/v4/projects/53927750/packages/generic/Ubuntu/$version/DataSorcerers.deb" --output ~/Sorcerers.deb
+curl "https://gitlab.com/api/v4/projects/53927750/packages/generic/Ubuntu/$version/DataSorcerers.deb" --output $HOME/Sorcerers.deb
 
 for node in $nodes; do
     if [ "$node" = "ifr0" ]  || [ "$node" = "ifr1" ] || [ "$node" = "fusioncore" ]; then
@@ -37,7 +37,7 @@ for node in $nodes; do
     (
         echo "installing on $node"
         # Copy the deb to all the nodes
-        scp ~/Sorcerers.deb "$node:~/Sorcerers.deb"
+        scp $HOME/Sorcerers.deb "$node:~/Sorcerers.deb"
         # Build the deb on all the nodes
         ssh $node 'sudo dpkg -i ~/Sorcerers.deb || sudo apt install -f -y'
         # remove the package corpse

@@ -37,10 +37,10 @@ if [ ! "$@" = "" ]; then
 fi
 
 # Download the fusion core debian
-curl "https://gitlab.com/api/v4/projects/53927750/packages/generic/Ubuntu/$version/FusionCore.deb" --output ./FusionCore.deb
+curl "https://gitlab.com/api/v4/projects/53927750/packages/generic/Ubuntu/$version/FusionCore.deb" --output $HOME/FusionCore.deb
 
 # Copy the deb to the node
-scp ./FusionCore.deb "$node:~/FusionCore.deb"
+scp $HOME/FusionCore.deb "$node:~/FusionCore.deb"
 # Build the deb on all the node
 ssh $node 'sudo dpkg -i ~/FusionCore.deb || sudo apt install -f -y'
 # remove the package corpse
