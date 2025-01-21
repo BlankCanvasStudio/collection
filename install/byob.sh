@@ -138,6 +138,10 @@ fi
 
 nodes=$(./util/list-nodes.sh)
 
+
+echo "client file: $client_file"
+
+
 pushd .
 
     cd $byob
