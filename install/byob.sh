@@ -162,7 +162,7 @@ if [ ! "$cANDc" = "" ]; then
     echo ""
 
     ssh $cANDc "sudo apt -y update"
-    ssd $cANDc "sudo apt -y install git gcc python3-dev build-essential socat"
+    ssh $cANDc "sudo apt -y install git gcc python3-dev build-essential socat"
     ssh $cANDc "sudo apt -y update --fix-missing"
 
     scp ./util/byossh "$cANDc":byossh
