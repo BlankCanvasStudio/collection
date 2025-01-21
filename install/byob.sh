@@ -130,8 +130,7 @@ echo "building client binary..."
 echo ""
 pushd .
 raw=$(create_client $server_ip $port $modules)
-echo -e "last 2:\n$(echo $raw | tail -2)"
-client_file=$(echo $raw | tail -1)
+client_file="$byob$(echo $raw | head -1)"
 popd
 # root=$(echo $client_file | sed 's|^/||;s|/.*||')
 # if [ ! -f $root ]; then
