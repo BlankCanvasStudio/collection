@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -xe
+set -e
 
 server_ip=""
 port=""
@@ -150,6 +150,7 @@ pushd .
     echo "copying client binary"
     echo ""
     for node in $nodes; do
+        echo "scp cmd: scp $client_file $node:byob-client"
         scp $client_file $node:byob-client
         ssh $node "sudo mv ~/byob-client /usr/local/bin"
         ssh $node "sudo chmod +x /usr/local/bin/byob-client"
