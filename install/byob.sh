@@ -96,6 +96,7 @@ install() {
         cd $byob
         git pull
         pip install -r ./requirements.txt
+        rm -rf modules/clients/*
     popd
 }
 
