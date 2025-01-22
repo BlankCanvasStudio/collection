@@ -1,6 +1,7 @@
 #!/bin/bash
 
 install=false
+background=false
 
 show_help() {
     echo "Usage: ./util/byoserver [flags]"
@@ -26,6 +27,10 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
 
+        -bg | --background)
+            background=true
+            shift
+            ;;
         *)
             echo "unknown paramter: $1"
             echo "exiting"
@@ -43,5 +48,9 @@ if [ "$install" = "true" ]; then
 fi
 
 cd ~/byob/byob
-./server.py
+if [ "$background" = "true" ]; then
+    ./server.py --background &
+else
+    ./server.py
+fi
 
