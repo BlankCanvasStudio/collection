@@ -37,11 +37,11 @@ for node in $nodes; do
     (
         echo "installing on $node"
         # Copy the deb to all the nodes
-        scp $HOME/Sorcerers.deb "$node:~/Sorcerers.deb"
+        scp $HOME/Sorcerers.deb "$node:$HOME/Sorcerers.deb"
         # Build the deb on all the nodes
-        ssh $node 'sudo dpkg -i ~/Sorcerers.deb || sudo apt install -f -y'
+        ssh $node "sudo dpkg -i $HOME/Sorcerers.deb || sudo apt install -f -y"
         # remove the package corpse
-        ssh $node 'rm ~/Sorcerers.deb'
+        ssh $node "rm $HOME/Sorcerers.deb"
     ) &
 done
 
