@@ -40,9 +40,9 @@ fi
 curl "https://gitlab.com/api/v4/projects/53927750/packages/generic/Ubuntu/$version/FusionCore.deb" --output $HOME/FusionCore.deb
 
 # Copy the deb to the node
-scp $HOME/FusionCore.deb "$node:~/FusionCore.deb"
+scp $HOME/FusionCore.deb "$node:$HOME/FusionCore.deb"
 # Build the deb on all the node
-ssh $node 'sudo dpkg -i ~/FusionCore.deb || sudo apt install -f -y'
+ssh $node "sudo dpkg -i $HOME/FusionCore.deb || sudo apt install -f -y"
 # remove the package corpse
-ssh $node 'rm ~/FusionCore.deb'
+ssh $node "rm $HOME/FusionCore.deb"
 
