@@ -11,14 +11,13 @@ show_help() {
     echo -e "-i installs byob-client onto all the nodes attached to this xdc before running the server"
     echo -e "\tthis only needs to be run once"
     echo -e ""
-    echo -e "[nodes] are optional. They specify the nodes to install the sensors on. If none are given, the sensors are installed on all the nodes"
-    echo -e ""
 }
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -h | --help)
             show_help
+            exit 0
             shift
             ;;
         -i)
