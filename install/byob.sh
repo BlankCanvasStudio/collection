@@ -155,7 +155,8 @@ pushd .
         if [ "${client_file: -3}" = ".py" ]; then
             (
                 ssh $node "sudo apt -y install python3-pip"
-                ssh $node "pip install colorama numpy && sudo pip install colorama numpy"
+                ssh $node "pip install colorama numpy pyxhook && sudo pip install colorama numpy pyxhook"
+
             ) &
         fi
     done
