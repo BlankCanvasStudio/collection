@@ -62,6 +62,10 @@ to work out of the box. Feel free to modify and extend these scripts as you see 
 That should be everything you need to know! The rest of this document is technical details on the
 software included in this repo, in case you'd only like to use parts of it
 
+**If you take repeated trials and want the most accurate process data, restart 
+`discern-proc.service` before each trial. The Process Sorcerer ignores all process running when it 
+boots and only collects data on the ones started after it boots. This will change between trials**
+
 
 ### Orchestration
 
