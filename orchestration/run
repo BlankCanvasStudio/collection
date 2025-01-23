@@ -91,6 +91,14 @@ exfiltrate_text_files() {
     done
 }
 
+restart_proc_sorcerer() {
+    nodes=$(execute "$xdc" ./util/list-nodes.sh)
+
+    for node in $nodes; do
+        execute $xdc "ssh $node 'sudo systemctl restart discern-proc'"
+    done
+}
+
 show_help() {
     echo ""
     echo "Usage: ./orchestration/run [flags] <xdc> <iterations> <save data location> <experiment name>"
@@ -183,6 +191,7 @@ for (( i = 0; i < $iterations; i++ )); do
     # Empty the databases, just in case
     execute "$xdc" "./util/empty-databases.sh 'fusioncore'"
     clear_text_files "$xdc" 
+    restart_proc_sorcerer
     # Run an iteration of the experiment
     echo "running experiment loop"
     execute "$xdc" "./experiments/$command/run"
