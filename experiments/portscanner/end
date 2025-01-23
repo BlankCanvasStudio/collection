@@ -3,6 +3,6 @@
 echo "ending portscanning experiment"
 
 # Incase it recycles commands between experiments
-ssh attacker "rm ~/byob/database.db"
-rm ~/byob/byob/database.db
+ssh attacker "rm ~/byob/database.db" || true
+rm ~/byob/byob/database.db || true
 
