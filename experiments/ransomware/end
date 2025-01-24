@@ -8,6 +8,12 @@ rm ~/byob/byob/database.db || true
 ssh attacker "rm ~/byob/output/*" || true
 
 
+remote_kill() {
+    node=$1
+    prog=$2
+    ssh $node "sudo kill \$(ps -e | grep $prog | awk '{print \$1}')"
+}
+
 decrypt_file() {
     file=$1
     if [ -z "${file// }" ] || [ "$file" = "None" ]; then
