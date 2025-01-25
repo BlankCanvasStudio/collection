@@ -15,7 +15,7 @@ remote_kill() {
 }
 
 decrypt_file() {
-    if [[ "$1" == *discern* ]]; then
+    if [[ $1 =~ discern ]]; then
         return
     fi
     res=$(ssh attacker "if [[ -f \"$1\" ]]; then echo 'exists'; fi")
