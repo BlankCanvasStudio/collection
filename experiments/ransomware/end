@@ -14,7 +14,7 @@ remote_kill() {
     ssh $node "sudo kill \$(ps -e | grep $prog | awk '{print \$1}')"
 }
 
-encrypt_file() {
+decrypt_file() {
     if [[ "$1" == *discern* ]]; then
         return
     fi
