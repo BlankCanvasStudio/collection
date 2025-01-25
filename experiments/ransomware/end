@@ -47,7 +47,7 @@ printf "%s\n" "$output" | while IFS= read -r file; do
         break
     fi
     total=$((total + 1))
-    echo -e "encrypting: $file\n"
+    echo -e "decrypting: $file\n"
     decrypt_file "$file" < /dev/null || true
 done
 
