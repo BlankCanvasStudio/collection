@@ -1,0 +1,16 @@
+from mergexp import *
+# create a topology named 'portscanner'
+net = Network('crypto', addressing==ipv4, routing==static)
+nodes = [net.node(name, image == 'bullseye-edu') for name in [ 'attacker','compromised','victim1','victim2' ]]
+lanlan1 = net.connect([nodes[0],nodes[1],nodes[2],nodes[3]])
+lanlan1[nodes[0]].socket.addrs = ip4('10.10.10.1/24')
+lanlan1[nodes[1]].socket.addrs = ip4('10.10.10.2/24')
+lanlan1[nodes[2]].socket.addrs = ip4('10.10.10.3/24')
+lanlan1[nodes[3]].socket.addrs = ip4('10.10.10.4/24')
+
+fusioncore = net.node('fusioncore', image == 'bullseye-edu', memory.capacity>=gb(8))
+
+for node in nodes:
+	net.connect([fusioncore, node])
+
+experiment(net)

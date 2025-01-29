@@ -1,0 +1,25 @@
+#!/bin/bash
+
+echo "ending ransomware experiment"
+
+# Incase it recycles commands between experiments
+ssh attacker "rm ~/byob/database.db" || true
+rm ~/byob/byob/database.db || true
+ssh attacker "rm ~/byob/output/*" || true
+
+
+remote_kill() {
+    node=$1
+    prog=$2
+    ssh $node "sudo kill \$(ps -e | grep $prog | awk '{print \$1}')"
+}
+
+ssh attacker "byossh compromised sudo kill \$(ps -e | grep python | awk '{print \$1}')"
+ssh attacker "byossh compromised sudo kill \$(ps -e | grep byob | awk '{print \$1}')"
+
+# Kill byob server on attacker
+remote_kill attacker server
+remote_kill attacker python
+
+sleep 8 # Make sure all the data downloads
+
