@@ -2,7 +2,7 @@
 
 set -e
 
-version="0.2.0"
+version="0.2.1"
 
 show_help() {
     echo "Usage: ./install-core.sh [flags] <node>"
