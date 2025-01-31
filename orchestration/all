@@ -1,0 +1,10 @@
+#!/bin/bash
+
+./orchestration sunsh 20 ../official/data/dnsmitm-with-json       dnsmitm
+./orchestration sunsh 20 ../official/data/packetsniffer-with-json packetsniffer
+./orchestration sunsh 20 ../official/data/portscanner-with-json   portscanner
+./orchestration sunsh 20 ../official/data/ransomware-with-json    ransomware
+./orchestration sunsh 20 ../official/data/spread-with-json        spread
+./orchestration sunsh 20 ../official/data/synflood-with-json      synflood
+./orchestration sunsh 20 ../official/data/upload-with-json        upload
+
