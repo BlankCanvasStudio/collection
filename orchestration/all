@@ -8,3 +8,5 @@
 ./orchestration sunsh 20 ../official/data/synflood-with-json      synflood
 ./orchestration sunsh 20 ../official/data/upload-with-json        upload
 
+cd ../official && git add * && git commit -m "re-running all the data" && git push
+
