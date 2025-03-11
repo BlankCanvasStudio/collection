@@ -1,8 +1,7 @@
 from mergexp import *
 # create a topology named 'synflood'
 net = Network('synflood', addressing==ipv4, routing==static)
-nodes = [net.node(name, image == 'bullseye-edu') for name in [ 'attacker','client','router','server', 
-        'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10', 'b11', 'b12', 'b13' ]]
+nodes = [net.node(name, image == 'bullseye-edu') for name in [ 'attacker','client','router','server', 'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10', 'b11', 'b12', 'b13' ]]
 linklink1 = net.connect([nodes[2],nodes[3]])
 linklink1[nodes[2]].socket.addrs = ip4('5.6.7.2/24')
 linklink1[nodes[3]].socket.addrs = ip4('5.6.7.8/24')
