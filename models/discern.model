@@ -1,0 +1,11 @@
+from mergexp import *
+# create a topology named 'portscanner'
+net = Network('crypto', addressing==ipv4, routing==static)
+nodes = [net.node(name, image == 'discern-debian-11') for name in [ 'attacker' ]]
+
+fusioncore = net.node('fusioncore', image == 'bullseye-edu', memory.capacity>=gb(8))
+
+for node in nodes:
+	net.connect([fusioncore, node])
+
+experiment(net)

