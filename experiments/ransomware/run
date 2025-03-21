@@ -18,7 +18,7 @@ decrypt_file() {
 }
 
 
-ssh attacker "cd ~/byob && ./server.py --background" &
+ssh attacker "cd ~/byob; ./server.py --background" &
 attackerPid=$1
 
 sleep 5 # let the server boot
