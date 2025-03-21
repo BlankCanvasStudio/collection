@@ -107,6 +107,7 @@ show_help() {
     echo "startexp is meant to run on the XDC. This is runs on a local computer than can ssh into the xdc, wraps startexp, and exfiltrates the data"
     echo ""
     echo "-h/--help shows this menu"
+    echo "-f/--fresh re-materializes on every iteration. This is very costly and slow. Its not recommended"
     echo ""
     echo "xdc:             is the xdc you'd like to run the experiment through"
     echo "iterations:      is how many number of data points you'd like to collect"
@@ -120,12 +121,18 @@ xdc=""
 commands=""
 iterations=""
 destination=""
+fresh=false
 
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -h | --help)
             show_help
+            shift
+            ;;
+
+        -f | --fresh)
+            fresh=true
             shift
             ;;
 
@@ -182,33 +189,58 @@ verify_collection_install "$xdc"
 # Make the folder to save the data in
 mkdir -p "$destination"
 
-# Build the experiment from the xdc
-build_experiment "$xdc" "$command"
+if [ "$fresh" = "false" ]; then
+    # Build the experiment from the xdc
+    build_experiment "$xdc" "$command"
 
-update_bash_sweep "$xdc"
+    update_bash_sweep "$xdc"
+fi
+
 
 for (( i = 0; i < $iterations; i++ )); do
+    # Possibly build the experiment for each iteration
+    if [ "$fresh" = "true" ]; then
+        # Build the experiment from the xdc
+        build_experiment "$xdc" "$command"
+        update_bash_sweep "$xdc"
+    fi
+
     # Empty the databases, just in case
     execute "$xdc" "./util/empty-databases.sh 'fusioncore'"
     clear_text_files "$xdc" 
     restart_proc_sorcerer
+
     # Run an iteration of the experiment
     echo "running experiment loop"
     execute "$xdc" "./experiments/$command/run"
+
     # Save the data to the local machine
     echo "exfiltrating data..."
     exfiltrate_data "$xdc" "$destination" "$i"
     exfiltrate_text_files "$xdc" "$destination" "$i"
+
     # If there are any end of experiment comamnds to run that you don't want record
     if [ -f ./experiments/$command/end ]; then
         execute "$xdc" ./experiments/$command/end
     fi
+
     # Empty the databases so we don't save a bunch of old data repeatedly
     echo "emptying databases..."
     execute "$xdc" "./util/empty-databases.sh 'fusioncore'"
+
     # Remove empty files
     execute "$xdc" 'rm -r ~/FusionCore.deb ~/Sorcerers.deb ~/*-data/ ~/influx-data.tar.gz ~/postgres-data.sql || true'
+
+    # Decommission if we are running fresh
+    if [ "$fresh" = "true" ]; then
+        excute "$xdc" "stopexp $command"
+    fi
 done
+
+# Decommission if we aren't running fresh
+if [ "$fresh" = "false" ]; then
+    excute "$xdc" "stopexp $command"
+fi
 
 echo "done running experiments"
 
