@@ -85,6 +85,7 @@ if [ ! -f "./models/$lab.model" ]; then
     exit 1
 fi
 
+set -x
 
 PATH=$PATH:/share
 
