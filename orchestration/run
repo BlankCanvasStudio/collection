@@ -186,6 +186,8 @@ fi
 # Verify all the software is on the XDC
 verify_collection_install "$xdc"
 
+excute "$xdc" "stopexp $command"
+
 # Make the folder to save the data in
 mkdir -p "$destination"
 
