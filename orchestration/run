@@ -186,7 +186,7 @@ fi
 # Verify all the software is on the XDC
 verify_collection_install "$xdc"
 
-excute "$xdc" "stopexp $command"
+execute "$xdc" "stopexp $command"
 
 # Make the folder to save the data in
 mkdir -p "$destination"
@@ -234,13 +234,13 @@ for (( i = 0; i < $iterations; i++ )); do
 
     # Decommission if we are running fresh
     if [ "$fresh" = "true" ]; then
-        excute "$xdc" "stopexp $command"
+        execute "$xdc" "stopexp $command"
     fi
 done
 
 # Decommission if we aren't running fresh
 if [ "$fresh" = "false" ]; then
-    excute "$xdc" "stopexp $command"
+    execute "$xdc" "stopexp $command"
 fi
 
 echo "done running experiments"
