@@ -194,7 +194,7 @@ mkdir -p "$destination"
 if [ "$fresh" = "false" ]; then
     # Build the experiment from the xdc
     build_experiment "$xdc" "$command"
-    update_bash_sweep "$xdc"
+    # update_bash_sweep "$xdc"
 fi
 
 
@@ -203,7 +203,7 @@ for (( i = 0; i < $iterations; i++ )); do
     if [ "$fresh" = "true" ]; then
         # Build the experiment from the xdc
         build_experiment "$xdc" "$command"
-        update_bash_sweep "$xdc"
+        # update_bash_sweep "$xdc"
     fi
 
     # Empty the databases, just in case

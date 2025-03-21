@@ -148,14 +148,15 @@ pushd .
     echo ""
     for node in $nodes; do
         scp $client_file $node:byob-client
-        ssh $node "sudo mv ~/byob-client /usr/local/bin"
+        ssh $node "sudo mv $HOME/byob-client /usr/local/bin"
         ssh $node "sudo chmod +x /usr/local/bin/byob-client"
 
         # Install python deps if its not a static binary
         if [ "${client_file: -3}" = ".py" ]; then
             (
                 ssh $node "sudo apt -y install python3-pip"
-                ssh $node "pip install colorama numpy pycryptodome && sudo pip install colorama numpy pycryptodome"
+                ssh $node "pip install colorama numpy pycryptodome"
+                ssh $node "sudo pip install colorama numpy pycryptodome"
 
             ) &
         fi
@@ -175,10 +176,10 @@ if [ ! "$cANDc" = "" ]; then
     ssh $cANDc "sudo apt -y update --fix-missing"
 
     scp ./util/byossh "$cANDc":byossh
-    ssh $cANDc "sudo mv ~/byossh /usr/local/bin"
+    ssh $cANDc "sudo mv $HOME/byossh /usr/local/bin"
     ssh $cANDc "sudo chmod +x /usr/local/bin/byossh"
 
-    ssh $cANDc "rm -r ~/byob || true"
+    ssh $cANDc "rm -r $HOME/byob" || true
     scp -r $byob "$cANDc":byob
 fi
 
