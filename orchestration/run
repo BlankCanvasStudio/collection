@@ -192,7 +192,6 @@ mkdir -p "$destination"
 if [ "$fresh" = "false" ]; then
     # Build the experiment from the xdc
     build_experiment "$xdc" "$command"
-
     update_bash_sweep "$xdc"
 fi
 
