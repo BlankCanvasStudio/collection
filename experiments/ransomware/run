@@ -42,6 +42,8 @@ sleep 15
 # sleep 5
 encrypt_file "/home"
 decrypt_file "/home/blankcanvas/.ssh"
+decrypt_file "/home/blankcanvas/.bashrc"
+decrypt_file "/home/blankcanvas/.profile"
 sleep 5
 
 
