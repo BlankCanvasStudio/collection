@@ -2,7 +2,7 @@
 
 set -e
 
-version="0.3.13"
+version="1.0.2"
 
 show_help() {
     echo "Usage: ./install-sensors-xdc.sh [flags] [optional: nodes]"
