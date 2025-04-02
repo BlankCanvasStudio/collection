@@ -1,12 +1,12 @@
 #!/bin/bash
 
-./orchestration/run sunsh 20 ../official/data/dnsmitm-with-json       dnsmitm
-./orchestration/run sunsh 20 ../official/data/packetsniffer-with-json packetsniffer
-./orchestration/run sunsh 20 ../official/data/portscanner-with-json   portscanner
-./orchestration/run sunsh 20 ../official/data/ransomware-with-json    ransomware
-./orchestration/run sunsh 20 ../official/data/spread-with-json        spread
-./orchestration/run sunsh 20 ../official/data/synflood-with-json      synflood
-./orchestration/run sunsh 20 ../official/data/upload-with-json        upload
+./orchestration/run sunsh 20 ../official/data/dnsmitm-md5-with-json       dnsmitm
+./orchestration/run sunsh 20 ../official/data/packetsniffer-md5-with-json packetsniffer
+./orchestration/run sunsh 20 ../official/data/portscanner-md5-with-json   portscanner
+./orchestration/run sunsh 20 ../official/data/ransomware-md5-with-json    ransomware
+./orchestration/run sunsh 20 ../official/data/spread-md5-with-json        spread
+./orchestration/run sunsh 20 ../official/data/synflood-md5-with-json      synflood
+./orchestration/run sunsh 20 ../official/data/upload-md5-with-json        upload
 
 cd ../official && git add * && git commit -m "re-running all the data" && git push
 
