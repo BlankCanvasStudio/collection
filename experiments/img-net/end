@@ -1,0 +1,4 @@
+#!/bin/bash
+
+ssh learner "rm -rf Image-ClassificationNN"
+

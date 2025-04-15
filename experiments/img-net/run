@@ -1,0 +1,10 @@
+#!/bin/bash
+
+ssh learner "git clone https://github.com/RashadGarayev/Image-ClassificationNN.git"
+
+ssh learner "cd ~/Image-ClassificationNN && pip3 install -r requirements.txt"
+
+ssh learner "cd ~/Image-ClassificationNN && python3 data-preparation.py"
+
+ssh learner "cd ~/Image-ClassificationNN && python3 train_NN.py"
+
