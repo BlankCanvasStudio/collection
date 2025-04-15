@@ -1,8 +1,20 @@
 #!/bin/bash
 
+ssh learner "sudo apt-get install -y git python3-pip"
+ssh learner "sudo apt install libgl1"
+
+
+
 ssh learner "git clone https://github.com/RashadGarayev/Image-ClassificationNN.git"
 
+
+
+ssh learner "cd ~/Image-ClassificationNN && sed -i 's#sklearn#scikit-learn#' requirements.txt"
+ssh learner "cd ~/Image-ClassificationNN && sed -i 's#skimage#scikit-image#' requirements.txt"
 ssh learner "cd ~/Image-ClassificationNN && pip3 install -r requirements.txt"
+
+
+ssh learner "cd ~/Image-ClassificationNN && cp test/dog1.jpg test/dog.jpg"
 
 ssh learner "cd ~/Image-ClassificationNN && python3 data-preparation.py"
 
