@@ -47,13 +47,13 @@ ssh $node "sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/
 ssh $node "sudo chmod a+r /etc/apt/keyrings/docker.asc"
 
 # Add the repository to Apt sources:
-ssh $node 'echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null'
-ssh $node "sudo apt-get update"
+ssh $node '. /etc/os-release
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/${ID} ${UBUNTU_CODENAME:-$VERSION_CODENAME} stable" | \
+            sudo tee /etc/apt/sources.list.d/docker.list > /dev/null'
 
-ssh $node "sudo apt-get install docker-ce docker-ce-cli containerd.io"
+ssh $node 'sudo apt-get update'
+ 
+ssh $node "sudo apt-get install -y docker-ce docker-ce-cli containerd.io"
 
 # Copy the deb to the node
 scp $HOME/FusionCore.deb "$node:$HOME/FusionCore.deb"
