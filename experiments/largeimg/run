@@ -1,0 +1,9 @@
+#!/bin/bash
+
+ssh learner "sudo apt-get install -y git python3-pip"
+ssh learner "sudo apt install -y libgl1"
+
+sleep 3
+
+ssh learner "git clone https://github.com/anubhavparas/image-classification-using-cnn/tree/master/Code"
+
