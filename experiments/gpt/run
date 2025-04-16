@@ -8,7 +8,7 @@ sleep 3
 # ssh learner "git clone https://github.com/anubhavparas/image-classification-using-cnn.git"
 # ssh learner "pip3 install nltk torch fire brainscore"
  
-scp ./experiments/largeimg/Dockerfile.cpu learner:~/gpt-2/Dockerfile.cpu
+scp ./experiments/gpt/Dockerfile.cpu learner:~/gpt-2/Dockerfile.cpu
 
 ssh learner "git clone 'https://github.com/openai/gpt-2.git'"
 
