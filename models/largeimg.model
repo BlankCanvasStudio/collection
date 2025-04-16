@@ -1,7 +1,7 @@
 from mergexp import *
 # create a topology named 'portscanner'
 net = Network('img-net', addressing==ipv4, routing==static)
-nodes = [net.node(name, image == 'bullseye-edu') for name in [ 'learner' ]]
+nodes = [net.node(name, image == 'bullseye-edu', proc.cores>=4, memory.capacity>=gb(8)) for name in [ 'learner' ]]
 
 fusioncore = net.node('fusioncore', image == 'bullseye-edu', memory.capacity>=gb(8))
 
