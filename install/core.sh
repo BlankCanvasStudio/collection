@@ -2,7 +2,7 @@
 
 set -e
 
-version="1.1.0"
+version="1.1.1"
 
 show_help() {
     echo "Usage: ./install-core.sh [flags] <node>"
@@ -38,6 +38,22 @@ fi
 
 # Download the fusion core debian
 curl "https://gitlab.com/api/v4/projects/53927750/packages/generic/Ubuntu/$version/FusionCore.deb" --output $HOME/FusionCore.deb
+
+# Add Docker's official GPG key:
+ssh $node "sudo apt-get update"
+ssh $node "sudo apt-get install ca-certificates curl"
+ssh $node "sudo install -m 0755 -d /etc/apt/keyrings"
+ssh $node "sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc"
+ssh $node "sudo chmod a+r /etc/apt/keyrings/docker.asc"
+
+# Add the repository to Apt sources:
+ssh $node 'echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null'
+ssh $node "sudo apt-get update"
+
+ssh $node "sudo apt-get install docker-ce docker-ce-cli containerd.io"
 
 # Copy the deb to the node
 scp $HOME/FusionCore.deb "$node:$HOME/FusionCore.deb"
