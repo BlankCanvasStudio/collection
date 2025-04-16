@@ -10,7 +10,7 @@ sleep 3
 # 
 #
 ssh learner "git clone 'https://github.com/openai/gpt-2.git'"
-ssh learner "cd gpt-2 && docker build --tag gpt-2 -f Dockerfile.cpu ."
+ssh learner "cd gpt-2 && sudo docker build --tag gpt-2 -f Dockerfile.cpu ."
 
 docker run --runtime=nvidia gpt-2 bash "python3 src/generate_unconditional_samples.py | tee /tmp/samples"
 
