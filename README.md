@@ -14,7 +14,8 @@ stored, please refer to the
 ## Quick Start
 
 All the collection code in this repository is meant to be called from the project root and is meant to be run
-on an XDC. An analysis code should be executed from the root directory on the users local machine. 
+on an XDC. An analysis code should be executed from the root directory on the users local machine. **All the 
+scripts in this repo have help menus; If you run into any errors, please read them.**
 
 To start an experiment, you should run:
 
