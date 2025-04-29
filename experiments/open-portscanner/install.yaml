@@ -28,6 +28,11 @@
         state: absent
         path: /home/{{ ansible_user_id }}/sticky_elephant
 
+    - name: stop docker containers
+      community.docker.docker_container:
+        name: hpfeeds
+        state: absent
+
     - name: Install docker for ansible
       become: true
       ansible.builtin.shell:
@@ -67,5 +72,4 @@
       ansible.builtin.copy:
         src: ./sticky_elephant.conf
         dest: /home/{{ ansible_user_id }}/sticky_elephant/sticky_elephant.conf
-
 
