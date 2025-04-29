@@ -1,0 +1,6 @@
+[honeypots:children]
+postgres
+
+[postgres]
+attacker
+
