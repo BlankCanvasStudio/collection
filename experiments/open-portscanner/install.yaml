@@ -10,13 +10,20 @@
     - name: Install pip
       become: true
       ansible.builtin.package:
-        name: pip3-python
+        name: pip
         state: present
 
 
 - name: intall postgres honeypot pattern
   hosts: postgres
   tasks:
+    - name: Remove previous install
+      become: true
+      ansible.builtin.file:
+        state: absent
+        src: /home/{{ ansible_user_id }}/sticky_elephant
+
+
     - name: Install docker (for hpfeeds)
       become: true
       ansible.builtin.package:
@@ -27,7 +34,7 @@
       ansible.builtin.git:
         clone: true
         depth: 1
-        dest: /home/{{ ansible_user_id }}/
+        dest: /home/{{ ansible_user_id }}/sticky_elephant
         repo: https://github.com/betheroot/sticky_elephant.git
 
     - name: install pg h
