@@ -57,7 +57,8 @@
       community.docker.docker_container:
         image: hpfeeds/hpfeeds-broker:latest
         name: hpfeeds
-        ports:
+        publish_all_ports: true
+        published_ports:
           - 10000:10000
           - 9431:9431
         detach: true
