@@ -1,0 +1,60 @@
+- name: install universal dependencies
+  hosts: honeypots
+  tasks: 
+    - name: Install git
+      become: true
+      ansible.builtin.package:
+        name: git
+        state: present
+
+    - name: Install pip
+      become: true
+      ansible.builtin.package:
+        name: pip3-python
+        state: present
+
+
+- name: intall postgres honeypot pattern
+  hosts: postgres
+  tasks:
+    - name: Install docker (for hpfeeds)
+      become: true
+      ansible.builtin.package:
+        name: docker.io
+        state: present
+
+    - name: clone honeypot repo
+      ansible.builtin.git:
+        clone: true
+        depth: 1
+        dest: /home/{{ ansible_user_id }}/
+        repo: https://github.com/betheroot/sticky_elephant.git
+
+    - name: install pg h
+      ansible.builtin.git:
+        clone: true
+        depth: l
+        dest: /home/{{ ansible_user_id }}/
+        repo: https://github.com/betheroot/sticky_elephant.git
+
+    - name: start hpfeeds docker container
+      become: true
+      community.docker.docker_container:
+        image: hpfeeds/hpfeeds-broker:latest
+        exposed_ports:
+          - 10000
+          - 9431
+        detach: true
+
+    - name: install sticky elephant
+      ansible.builtin.shell: 
+        chdir:  /home/{{ ansible_user_id }}/sticky_elephant
+        cmd: gem install sticky_elephant
+
+
+    - name: install sticky elephant config file
+      ansible.builtin.copy:
+        src: ./sticky_elephant.conf
+        dst: /home/{{ ansible_user_id }}/sticky_elephant/sticky_elephant.conf
+
+
