@@ -29,6 +29,7 @@
         path: /home/{{ ansible_user_id }}/sticky_elephant
 
     - name: stop docker containers
+      become: true
       community.docker.docker_container:
         name: hpfeeds
         state: absent
