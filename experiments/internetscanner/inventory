@@ -1,4 +1,6 @@
 [honeypots:children]
+pg_webhosts
+mysql_webhosts
 postgres
 mysql
 tomcat
