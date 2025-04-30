@@ -106,10 +106,10 @@
         state: present
 
     - name: listen on 0.0.0.0
-      ansible.builtin.file:
+      ansible.builtin.lineinfile:
         path: /etc/mysql/mariadb.conf.d/50-server.cnf
-        regexp: '127.0.0.1'
-        replace: '0.0.0.0'
+        regexp: 'bind-address'
+        line: 'bind-address = 0.0.0.0'
 
     - name: restart mysql
       systemd:
