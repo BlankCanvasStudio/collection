@@ -54,6 +54,13 @@
   tasks:
     - name: restart dns
       systemd:
+        name: 
+          - systemd-resolved
+        daemon_reload: true
+        state: stopped
+
+    - name: restart dns
+      systemd:
         name: dns
         daemon_reload: true
         state: restarted
