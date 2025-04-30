@@ -1,11 +1,12 @@
-# - name: intall postgres honeypot pattern
-#   hosts: postgres
-#   become: true
-#   tasks:
-#     - name: restart postgres
-#       systemd:
-#         name: postgres
-#         state: restarted
+- name: intall postgres honeypot pattern
+  hosts: postgres
+  become: true
+  tasks:
+    - name: restart postgres
+      systemd:
+        name: postgres
+        daemon_reload: true
+        state: restarted
 
 - name: tomcat server
   hosts: tomcat

@@ -35,62 +35,69 @@
         - vnc.service
         - wordpress.service
 
-
-- name: intall postgres honeypot pattern
+- name: postgres
   hosts: postgres
   tasks:
-    - name: Remove previous install
-      become: true
-      ansible.builtin.file:
-        state: absent
-        path: /home/{{ ansible_user_id }}/sticky_elephant
-
-    - name: Install docker (for hpfeeds)
-      become: true
-      ansible.builtin.package:
-        name: docker.io
-        state: present
-
-    - name: Install docker for ansible
+    - name: install deps
       become: true
       ansible.builtin.shell:
-        cmd: pip install docker
+        cmd: pip install honeypots
 
-    - name: stop docker containers
-      become: true
-      community.docker.docker_container:
-        name: hpfeeds
-        state: absent
-      ignore_errors: true
-
-    - name: clone honeypot repo
-      ansible.builtin.git:
-        clone: true
-        depth: 1
-        dest: /home/{{ ansible_user_id }}/sticky_elephant
-        repo: https://github.com/betheroot/sticky_elephant.git
-
-    - name: start hpfeeds docker container
-      become: true
-      community.docker.docker_container:
-        image: hpfeeds/hpfeeds-broker:latest
-        name: hpfeeds
-        ports:
-          - 10000:10000
-          - 9431:9431
-        detach: true
-
-    - name: install sticky elephant
-      become: true
-      ansible.builtin.shell: 
-        chdir:  /home/{{ ansible_user_id }}/sticky_elephant
-        cmd: gem install sticky_elephant
-
-
-    - name: install sticky elephant config file
-      ansible.builtin.copy:
-        src: ./sticky_elephant.conf
-        dest: /home/{{ ansible_user_id }}/sticky_elephant/sticky_elephant.conf
+# - name: intall postgres honeypot pattern
+#   hosts: postgres
+#   tasks:
+#     - name: Remove previous install
+#       become: true
+#       ansible.builtin.file:
+#         state: absent
+#         path: /home/{{ ansible_user_id }}/sticky_elephant
+# 
+#     - name: Install docker (for hpfeeds)
+#       become: true
+#       ansible.builtin.package:
+#         name: docker.io
+#         state: present
+# 
+#     - name: Install docker for ansible
+#       become: true
+#       ansible.builtin.shell:
+#         cmd: pip install docker
+# 
+#     - name: stop docker containers
+#       become: true
+#       community.docker.docker_container:
+#         name: hpfeeds
+#         state: absent
+#       ignore_errors: true
+# 
+#     - name: clone honeypot repo
+#       ansible.builtin.git:
+#         clone: true
+#         depth: 1
+#         dest: /home/{{ ansible_user_id }}/sticky_elephant
+#         repo: https://github.com/betheroot/sticky_elephant.git
+# 
+#     - name: start hpfeeds docker container
+#       become: true
+#       community.docker.docker_container:
+#         image: hpfeeds/hpfeeds-broker:latest
+#         name: hpfeeds
+#         ports:
+#           - 10000:10000
+#           - 9431:9431
+#         detach: true
+# 
+#     - name: install sticky elephant
+#       become: true
+#       ansible.builtin.shell: 
+#         chdir:  /home/{{ ansible_user_id }}/sticky_elephant
+#         cmd: gem install sticky_elephant
+# 
+# 
+#     - name: install sticky elephant config file
+#       ansible.builtin.copy:
+#         src: ./sticky_elephant.conf
+#         dest: /home/{{ ansible_user_id }}/sticky_elephant/sticky_elephant.conf
 
 
 - name: install mysql
