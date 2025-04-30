@@ -45,6 +45,12 @@
         state: absent
         path: /home/{{ ansible_user_id }}/sticky_elephant
 
+    - name: Install docker (for hpfeeds)
+      become: true
+      ansible.builtin.package:
+        name: docker.io
+        state: present
+
     - name: Install docker for ansible
       become: true
       ansible.builtin.shell:
@@ -56,12 +62,6 @@
         name: hpfeeds
         state: absent
       ignore_errors: true
-
-    - name: Install docker (for hpfeeds)
-      become: true
-      ansible.builtin.package:
-        name: docker.io
-        state: present
 
     - name: clone honeypot repo
       ansible.builtin.git:
