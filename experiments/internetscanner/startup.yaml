@@ -2,7 +2,7 @@
   hosts: postgres
   tasks:
     - name: restart postgres
-      ansible.builtin.systemd_service:
+      systemd:
         name: postgres
         state: restarted
 
@@ -10,7 +10,7 @@
   hosts: tomcat
   tasks:
     - name: restart tomcat
-      ansible.builtin.systemd_service:
+      systemd:
         name: tomcat
         state: restarted
 
@@ -18,7 +18,7 @@
   hosts: nginx
   tasks:
     - name: restart nginx
-      ansible.builtin.systemd_service:
+      systemd:
         name: nginx
         state: restarted
 
@@ -26,7 +26,7 @@
   hosts: outlook
   tasks:
     - name: restart outlook
-      ansible.builtin.systemd_service:
+      systemd:
         name: outlook
         state: restarted
 
@@ -34,7 +34,7 @@
   hosts: wordpress
   tasks:
     - name: restart wordpress
-      ansible.builtin.systemd_service:
+      systemd:
         name: wordpress
         state: restarted
 
@@ -42,7 +42,7 @@
   hosts: dns
   tasks:
     - name: restart dns
-      ansible.builtin.systemd_service:
+      systemd:
         name: dns
         state: restarted
 
@@ -50,7 +50,7 @@
   hosts: pop3
   tasks:
     - name: restart pop3
-      ansible.builtin.systemd_service:
+      systemd:
         name: pop3
         state: restarted
 
@@ -58,7 +58,7 @@
   hosts: smtp
   tasks:
     - name: restart smtp
-      ansible.builtin.systemd_service:
+      systemd:
         name: smtp
         state: restarted
 
@@ -66,7 +66,7 @@
   hosts: telnet
   tasks:
     - name: restart telnet
-      ansible.builtin.systemd_service:
+      systemd:
         name: telnet
         state: restarted
 
@@ -74,7 +74,7 @@
   hosts: vnc
   tasks:
     - name: restart vnc
-      ansible.builtin.systemd_service:
+      systemd:
         name: vnc
         state: restarted
 
