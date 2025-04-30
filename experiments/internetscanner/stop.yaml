@@ -1,0 +1,110 @@
+- name: intall postgres honeypot pattern
+  hosts: postgres
+  become: true
+  tasks:
+    - name: restart postgres
+      systemd:
+        name: postgres
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: tomcat server
+  hosts: tomcat
+  become: true
+  tasks:
+    - name: restart tomcat
+      systemd:
+        name: tomcat
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: nginx
+  hosts: nginx
+  become: true
+  tasks:
+    - name: restart nginx
+      systemd:
+        name: nginx
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: Outlook email client
+  hosts: outlook
+  become: true
+  tasks:
+    - name: restart outlook
+      systemd:
+        name: outlook
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: Wordpress instance
+  hosts: wordpress
+  become: true
+  tasks:
+    - name: restart wordpress
+      systemd:
+        name: wordpress
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: DNS
+  hosts: dns
+  become: true
+  tasks:
+    - name: restart dns
+      systemd:
+        name: dns
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: pop3
+  hosts: pop3
+  become: true
+  tasks:
+    - name: restart pop3
+      systemd:
+        name: pop3
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: smtp
+  hosts: smtp
+  become: true
+  tasks:
+    - name: restart smtp
+      systemd:
+        name: smtp
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: telnet
+  hosts: telnet
+  become: true
+  tasks:
+    - name: restart telnet
+      systemd:
+        name: telnet
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: vnc
+  hosts: vnc
+  become: true
+  tasks:
+    - name: restart vnc
+      systemd:
+        name: vnc
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
