@@ -45,16 +45,16 @@
         state: absent
         path: /home/{{ ansible_user_id }}/sticky_elephant
 
+    - name: Install docker for ansible
+      become: true
+      ansible.builtin.shell:
+        cmd: pip install docker
+
     - name: stop docker containers
       become: true
       community.docker.docker_container:
         name: hpfeeds
         state: absent
-
-    - name: Install docker for ansible
-      become: true
-      ansible.builtin.shell:
-        cmd: pip install docker
 
     - name: Install docker (for hpfeeds)
       become: true
