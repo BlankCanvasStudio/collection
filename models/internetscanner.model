@@ -35,7 +35,7 @@ internet_nodes = []
 
 
 for i in range(0, 2):
-    internet_nodes += [ net.node(f'{name}{i}', image == 'bullseye-edu') for name in node_types ]
+    internet_nodes += [ net.node(f'{name}{i+1}', image == 'bullseye-edu') for name in node_types ]
 
 internet = net.connect(internet_nodes + [ router_node ])
 
