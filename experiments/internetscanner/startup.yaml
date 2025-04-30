@@ -1,5 +1,6 @@
 - name: intall postgres honeypot pattern
   hosts: postgres
+  become: true
   tasks:
     - name: restart postgres
       systemd:
@@ -8,6 +9,7 @@
 
 - name: tomcat server
   hosts: tomcat
+  become: true
   tasks:
     - name: restart tomcat
       systemd:
@@ -16,6 +18,7 @@
 
 - name: nginx
   hosts: nginx
+  become: true
   tasks:
     - name: restart nginx
       systemd:
@@ -24,6 +27,7 @@
 
 - name: Outlook email client
   hosts: outlook
+  become: true
   tasks:
     - name: restart outlook
       systemd:
@@ -32,6 +36,7 @@
 
 - name: Wordpress instance
   hosts: wordpress
+  become: true
   tasks:
     - name: restart wordpress
       systemd:
@@ -40,6 +45,7 @@
 
 - name: DNS
   hosts: dns
+  become: true
   tasks:
     - name: restart dns
       systemd:
@@ -48,6 +54,7 @@
 
 - name: pop3
   hosts: pop3
+  become: true
   tasks:
     - name: restart pop3
       systemd:
@@ -56,6 +63,7 @@
 
 - name: smtp
   hosts: smtp
+  become: true
   tasks:
     - name: restart smtp
       systemd:
@@ -64,6 +72,7 @@
 
 - name: telnet
   hosts: telnet
+  become: true
   tasks:
     - name: restart telnet
       systemd:
@@ -72,6 +81,7 @@
 
 - name: vnc
   hosts: vnc
+  become: true
   tasks:
     - name: restart vnc
       systemd:
