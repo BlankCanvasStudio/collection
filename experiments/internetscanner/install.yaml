@@ -141,6 +141,7 @@
         state: present
 
     - name: build project
+      become: true
       ansible.builtin.shell:
         chdir:  /home/{{ ansible_user_id }}/tomcat-manager-honeypot
         cmd: mvn clean install
