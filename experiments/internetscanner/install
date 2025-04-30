@@ -5,6 +5,6 @@ if ! command -v ansible-playbook; then
     sudo DEBIAN_FRONTEND=noninteractive apt install -y ansible
 fi
 
-ansible-playbook -i ./inventory ./install.yaml
-ansible-playbook -i ./inventory ./startup.yaml
+ansible-playbook -i ./experiments/internetscanner/inventory ./experiments/internetscanner/install.yaml
+ansible-playbook -i ./experiments/internetscanner/inventory ./experiments/internetscanner/startup.yaml
 
