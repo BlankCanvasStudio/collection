@@ -16,40 +16,53 @@ vnc
 
 [postgres]
 postgres1
+postgres2
 
 [mysql]
 mysql1
+mysql2
 
 [tomcat]
 tomcat1
+tomcat2
 
 [nginx]
 nginx1
+nginx2
 
 [outlook]
 outlook1
+outlook2
 
 [wordpress]
 wordpress1
+wordpress2
 
 [dns]
 dns1
+dns2
 
 [pop3]
 pop31
+pop32
 
 [smtp]
 smtp1
+smtp2
 
 [telnet]
 telnet1
+telnet2
 
 [vnc]
 vnc1
+vnc2
 
 [pg_webhosts]
 pgwebhost1
+pgwebhost2
 
 [mysql_webhosts]
 mysqlwebhost1
+mysqlwebhost2
 
