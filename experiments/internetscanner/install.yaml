@@ -106,7 +106,7 @@
         state: present
 
     - name: listen on 0.0.0.0
-      ansible.builtin.lineinfile:
+      ansible.builtin.file:
         path: /etc/mysql/mariadb.conf.d/50-server.cnf
         regexp: '127.0.0.1'
         replace: '0.0.0.0'
