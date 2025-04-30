@@ -18,14 +18,38 @@ node_types = [
 ]
 
 net = Network('portscanner', addressing==ipv4, routing==static)
-nodes = [ net.node(f'{name}1', image == 'bullseye-edu') for name in node_types ]
 
-lanlan1 = net.connect([nodes[0],nodes[1],nodes[2],nodes[3]])
+router_node = net.node('router', image == 'bullseye-edu')
 
-lanlan1[nodes[0]].socket.addrs = ip4('10.10.10.1/24')
-lanlan1[nodes[1]].socket.addrs = ip4('10.10.10.2/24')
-lanlan1[nodes[2]].socket.addrs = ip4('10.10.10.3/24')
-lanlan1[nodes[3]].socket.addrs = ip4('10.10.10.4/24')
+client_node = net.node('client', image == 'bullseye-edu')
+
+
+lan = net.connect([ router_node, client_node ])
+lan[router_node].socket.addrs = ip4('192.168.86.1/24')
+lan[client_ndoe].socket.addrs = ip4('192.168.86.2/24')
+
+
+internet_nodes = []
+
+
+for i in range(0, 2):
+    internet_nodes += [ net.node(f'{name}{i}', image == 'bullseye-edu') for name in node_types ]
+
+internet = net.connect(internet_nodes + [ router_node ])
+
+
+Base_IP = "107.125.{}.{}/17"
+
+internet[router_node].socket.addrs = ip4(Base_IP.format(128, 1))
+
+for i, node in enumerate(internet_nodes):
+    top = (i // 256) + 128
+    bottom = (i % 256) + 2 # technically we miss some IPs, but I'm preventing collisions
+    internet[node].socket.addrs = ip4(Base_IP.format(top, bottom))
+
+
+nodes = internet_nodes + [ router_node, client_node ]
+
 
 fusioncore = net.node('fusioncore', image == 'bullseye-edu', memory.capacity>=gb(8))
 
