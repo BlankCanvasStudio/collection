@@ -34,6 +34,10 @@ for node in $nodes; do
     if [ "$node" = "ifr0" ]  || [ "$node" = "ifr1" ] || [ "$node" = "fusioncore" ]; then
         continue
     fi
+
+    echo "waiting for ssh on $node"
+    until ssh -o BatchMode=yes $node 'echo ssh up' 2> /dev/null; do sleep 1; done
+
     (
         echo "installing on $node"
         # Copy the deb to all the nodes
