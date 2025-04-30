@@ -111,7 +111,7 @@
         replace: '0.0.0.0'
 
     - name: restart mysql
-      ansible.builtin.systemd_service:
+      systemd:
         name: mariadb
         state: restarted
 
