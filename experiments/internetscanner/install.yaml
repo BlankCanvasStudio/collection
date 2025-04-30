@@ -94,9 +94,9 @@
 
 - name: install mysql
   hosts: mysql
+  become: true
   tasks:
     - name: install mysql
-      become: true
       ansible.builtin.package:
         name: 
           - mariadb-server 
