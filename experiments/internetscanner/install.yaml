@@ -55,6 +55,7 @@
       community.docker.docker_container:
         name: hpfeeds
         state: absent
+      ignore_errors: true
 
     - name: Install docker (for hpfeeds)
       become: true
