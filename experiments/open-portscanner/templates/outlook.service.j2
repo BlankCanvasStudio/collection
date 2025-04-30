@@ -1,0 +1,18 @@
+[Unit]
+Description=sticky elephant run script
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Restart=always
+RestartSec=1s
+
+WorkingDirectory=/home/{{ ansible_user_id }}/owa-honeypot
+ExecStart=/bin/bash -c 'python3 owa_pot.py'
+
+TimeoutStartSec=300
+TimeoutStopSec=60
+Type=forking
+
+[Install]
+WantedBy=multi-user.target

@@ -1,5 +1,0 @@
-Read this: https://github.com/STEELISI/fantasm
-
-Read honey pot logging material to see if we can spoof hosts
-
-

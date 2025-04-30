@@ -1,7 +1,7 @@
 #!/bin/bash
 
-./orchestration/run    sunsh 20 ../official/data/legitimate/dnsmitm       dnsmitm
-./orchestration/run -f sunsh 20 ../official/data/legitimate/gpt           gpt
+# ./orchestration/run    sunsh 20 ../official/data/legitimate/dnsmitm       dnsmitm
+# ./orchestration/run -f sunsh 20 ../official/data/legitimate/gpt           gpt
 ./orchestration/run -f sunsh 20 ../official/data/legitimate/imgnet        imgnet
 ./orchestration/run    sunsh 20 ../official/data/legitimate/packetsniffer packetsniffer
 ./orchestration/run    sunsh 20 ../official/data/legitimate/synflood      synflood

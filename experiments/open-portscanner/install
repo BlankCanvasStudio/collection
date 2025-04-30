@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if ! command -v ansible-playbook; then
+    sudo apt update
+    sudo DEBIAN_FRONTEND=noninteractive apt install -y ansible
+fi
+
+ansible-playbook -i ./inventory ./install.yaml
+ansible-playbook -i ./inventory ./startup.yaml
+

@@ -1,0 +1,35 @@
+#!/bin/python3
+
+from mergexp import *
+# create a topology named 'portscanner'
+
+node_types = [
+ "postgres",
+ "mysql",
+ "tomcat",
+ "nginx",
+ "outlook",
+ "wordpress",
+ "dns",
+ "pop3",
+ "smtp",
+ "telnet",
+ "vnc",
+]
+
+net = Network('portscanner', addressing==ipv4, routing==static)
+nodes = [ net.node(f'{name}1', image == 'bullseye-edu') for name in node_types ]
+
+lanlan1 = net.connect([nodes[0],nodes[1],nodes[2],nodes[3]])
+
+lanlan1[nodes[0]].socket.addrs = ip4('10.10.10.1/24')
+lanlan1[nodes[1]].socket.addrs = ip4('10.10.10.2/24')
+lanlan1[nodes[2]].socket.addrs = ip4('10.10.10.3/24')
+lanlan1[nodes[3]].socket.addrs = ip4('10.10.10.4/24')
+
+fusioncore = net.node('fusioncore', image == 'bullseye-edu', memory.capacity>=gb(8))
+
+for node in nodes:
+	net.connect([fusioncore, node])
+
+experiment(net)

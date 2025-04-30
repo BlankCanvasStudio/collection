@@ -1,0 +1,80 @@
+- name: intall postgres honeypot pattern
+  hosts: postgres
+  tasks:
+    - name: restart postgres
+      ansible.builtin.systemd_service:
+        name: postgres
+        state: restarted
+
+- name: tomcat server
+  hosts: tomcat
+  tasks:
+    - name: restart tomcat
+      ansible.builtin.systemd_service:
+        name: tomcat
+        state: restarted
+
+- name: nginx
+  hosts: nginx
+  tasks:
+    - name: restart nginx
+      ansible.builtin.systemd_service:
+        name: nginx
+        state: restarted
+
+- name: Outlook email client
+  hosts: outlook
+  tasks:
+    - name: restart outlook
+      ansible.builtin.systemd_service:
+        name: outlook
+        state: restarted
+
+- name: Wordpress instance
+  hosts: wordpress
+  tasks:
+    - name: restart wordpress
+      ansible.builtin.systemd_service:
+        name: wordpress
+        state: restarted
+
+- name: DNS
+  hosts: dns
+  tasks:
+    - name: restart dns
+      ansible.builtin.systemd_service:
+        name: dns
+        state: restarted
+
+- name: pop3
+  hosts: pop3
+  tasks:
+    - name: restart pop3
+      ansible.builtin.systemd_service:
+        name: pop3
+        state: restarted
+
+- name: smtp
+  hosts: smtp
+  tasks:
+    - name: restart smtp
+      ansible.builtin.systemd_service:
+        name: smtp
+        state: restarted
+
+- name: telnet
+  hosts: telnet
+  tasks:
+    - name: restart telnet
+      ansible.builtin.systemd_service:
+        name: telnet
+        state: restarted
+
+- name: vnc
+  hosts: vnc
+  tasks:
+    - name: restart vnc
+      ansible.builtin.systemd_service:
+        name: vnc
+        state: restarted
+
