@@ -36,7 +36,7 @@
         - wordpress.service
 
 - name: postgres
-  hosts: postgres
+  hosts: postgres pg_webhosts
   tasks:
     - name: install deps
       become: true
@@ -101,7 +101,7 @@
 
 
 - name: install mysql
-  hosts: mysql
+  hosts: mysql mysql_webhosts
   become: true
   tasks:
     - name: install mysql
@@ -178,7 +178,7 @@
         cmd: sudo pip install --upgrade flask
 
 - name: Wordpress instance
-  hosts: wordpress
+  hosts: wordpress pg_webhosts mysql_webhosts
   become: true
   tasks:
     - name: Install docker (for wordpress)

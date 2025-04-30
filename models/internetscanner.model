@@ -15,6 +15,8 @@ node_types = [
  "smtp",
  "telnet",
  "vnc",
+ "mysqlwebhost",
+ "pgwebhost",
 ]
 
 net = Network('portscanner', addressing==ipv4, routing==static)
@@ -26,7 +28,7 @@ client_node = net.node('client', image == 'bullseye-edu')
 
 lan = net.connect([ router_node, client_node ])
 lan[router_node].socket.addrs = ip4('192.168.86.1/24')
-lan[client_ndoe].socket.addrs = ip4('192.168.86.2/24')
+lan[client_node].socket.addrs = ip4('192.168.86.2/24')
 
 
 internet_nodes = []

@@ -1,5 +1,16 @@
 - name: intall postgres honeypot pattern
-  hosts: postgres
+  hosts: mysql mysql_webhosts
+  become: true
+  tasks:
+    - name: stop mysql
+      systemd:
+        name: mariadb
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: intall postgres honeypot pattern
+  hosts: postgres pg_webhosts
   become: true
   tasks:
     - name: stop postgres
@@ -43,7 +54,7 @@
       ignore_errors: true
 
 - name: Wordpress instance
-  hosts: wordpress
+  hosts: wordpress pg_webhosts mysql_webhosts
   become: true
   tasks:
     - name: stop wordpress

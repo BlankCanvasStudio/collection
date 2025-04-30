@@ -45,3 +45,9 @@ telnet1
 [vnc]
 vnc1
 
+[pg_webhosts]
+pgwebhost1
+
+[mysql_webhosts]
+mysqlwebhost1
+

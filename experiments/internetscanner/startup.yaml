@@ -1,5 +1,5 @@
 - name: intall postgres honeypot pattern
-  hosts: postgres
+  hosts: postgres pg_webhosts
   become: true
   tasks:
     - name: restart postgres
@@ -39,7 +39,7 @@
         state: restarted
 
 - name: Wordpress instance
-  hosts: wordpress
+  hosts: wordpress mysql_webhosts pg_webhosts
   become: true
   tasks:
     - name: restart wordpress
