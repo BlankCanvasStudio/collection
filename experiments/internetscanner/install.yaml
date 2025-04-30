@@ -193,12 +193,11 @@
 - name: DNS
   hosts: dns
   tasks:
-    # run with: sudo docker run --name udpot -p 5053:5053/udp -p 5053:5053/tcp -d jekil/udpot
-    - name: Install docker (for jekil/udpot)
+    - name: install deps
       become: true
-      ansible.builtin.package:
-        name: docker.io
-        state: present
+      ansible.builtin.shell:
+        cmd: pip install honeypots
+
 
 - name: pop3
   hosts: pop3

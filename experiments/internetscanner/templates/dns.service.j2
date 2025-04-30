@@ -7,7 +7,7 @@ After=network-online.target
 Restart=always
 RestartSec=1s
 
-ExecStart=/usr/bin/docker run --name udpot -p 5053:5053/udp -p 5053:5053/tcp -d jekil/udpot
+ExecStart=/usr/bin/python3 -m honeypots --setup dns:53
 
 TimeoutStartSec=300
 TimeoutStopSec=60
