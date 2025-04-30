@@ -45,8 +45,8 @@ Base_IP = "107.125.{}.{}/17"
 internet[router_node].socket.addrs = ip4(Base_IP.format(128, 1))
 
 for i, node in enumerate(internet_nodes):
-    top = (i // 256) + 128
-    bottom = (i % 256) + 2 # technically we miss some IPs, but I'm preventing collisions
+    top = ((i // 256) + 128) % 256
+    bottom = (i % 254) + 2 # technically we miss some IPs, but I'm preventing collisions
     internet[node].socket.addrs = ip4(Base_IP.format(top, bottom))
 
 
