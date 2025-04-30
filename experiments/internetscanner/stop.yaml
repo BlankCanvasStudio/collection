@@ -2,7 +2,7 @@
   hosts: postgres
   become: true
   tasks:
-    - name: restart postgres
+    - name: stop postgres
       systemd:
         name: postgres
         daemon_reload: true
@@ -13,7 +13,7 @@
   hosts: tomcat
   become: true
   tasks:
-    - name: restart tomcat
+    - name: stop tomcat
       systemd:
         name: tomcat
         daemon_reload: true
@@ -24,7 +24,7 @@
   hosts: nginx
   become: true
   tasks:
-    - name: restart nginx
+    - name: stop nginx
       systemd:
         name: nginx
         daemon_reload: true
@@ -35,7 +35,7 @@
   hosts: outlook
   become: true
   tasks:
-    - name: restart outlook
+    - name: stop outlook
       systemd:
         name: outlook
         daemon_reload: true
@@ -46,7 +46,7 @@
   hosts: wordpress
   become: true
   tasks:
-    - name: restart wordpress
+    - name: stop wordpress
       systemd:
         name: wordpress
         daemon_reload: true
@@ -57,7 +57,7 @@
   hosts: dns
   become: true
   tasks:
-    - name: restart dns
+    - name: stop dns
       systemd:
         name: dns
         daemon_reload: true
@@ -68,7 +68,7 @@
   hosts: pop3
   become: true
   tasks:
-    - name: restart pop3
+    - name: stop pop3
       systemd:
         name: pop3
         daemon_reload: true
@@ -79,7 +79,7 @@
   hosts: smtp
   become: true
   tasks:
-    - name: restart smtp
+    - name: stop smtp
       systemd:
         name: smtp
         daemon_reload: true
@@ -90,7 +90,7 @@
   hosts: telnet
   become: true
   tasks:
-    - name: restart telnet
+    - name: stop telnet
       systemd:
         name: telnet
         daemon_reload: true
@@ -101,7 +101,7 @@
   hosts: vnc
   become: true
   tasks:
-    - name: restart vnc
+    - name: stop vnc
       systemd:
         name: vnc
         daemon_reload: true
