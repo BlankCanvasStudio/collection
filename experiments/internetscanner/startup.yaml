@@ -14,6 +14,7 @@
     - name: restart tomcat
       systemd:
         name: tomcat
+        daemon_reload: true
         state: restarted
 
 - name: nginx
@@ -23,6 +24,7 @@
     - name: restart nginx
       systemd:
         name: nginx
+        daemon_reload: true
         state: restarted
 
 - name: Outlook email client
@@ -32,6 +34,7 @@
     - name: restart outlook
       systemd:
         name: outlook
+        daemon_reload: true
         state: restarted
 
 - name: Wordpress instance
@@ -41,6 +44,7 @@
     - name: restart wordpress
       systemd:
         name: wordpress
+        daemon_reload: true
         state: restarted
 
 - name: DNS
@@ -50,6 +54,7 @@
     - name: restart dns
       systemd:
         name: dns
+        daemon_reload: true
         state: restarted
 
 - name: pop3
@@ -59,6 +64,7 @@
     - name: restart pop3
       systemd:
         name: pop3
+        daemon_reload: true
         state: restarted
 
 - name: smtp
@@ -68,6 +74,7 @@
     - name: restart smtp
       systemd:
         name: smtp
+        daemon_reload: true
         state: restarted
 
 - name: telnet
@@ -77,6 +84,7 @@
     - name: restart telnet
       systemd:
         name: telnet
+        daemon_reload: true
         state: restarted
 
 - name: vnc
@@ -86,5 +94,6 @@
     - name: restart vnc
       systemd:
         name: vnc
+        daemon_reload: true
         state: restarted
 
