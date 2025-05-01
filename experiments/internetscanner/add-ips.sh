@@ -42,6 +42,7 @@ for ip in 107.125.{128..255}.{2..255}; do
     copy_index=$((($copy_index + 1) % $copies))
 
     if [ "$(($index % 500))" = "0" ]; then
+        echo "Added 500 ips"
         wait
     fi
 done
