@@ -30,8 +30,8 @@ for ip in 107.125.{128..255}.{2..255}; do
     # Drop 1/4 of all IPs randomly
     if [ "$((RANDOM % 4 + 1))" != "0" ]; then
         (
+            node_index=$((RANDOM % $node_kinds))
             version=$(($index % $total_nodes)) 
-            node_index=$(($index % $node_kinds)) 
 
             ssh "${node_types[node_index]}$((copy_index + 1))" "sudo ip addr add $ip/17 dev eth1"
 
