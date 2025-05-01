@@ -7,10 +7,10 @@ if ! command -v ansible-playbook; then
     sudo DEBIAN_FRONTEND=noninteractive apt install -y ansible
 fi
 
+./experiments/internetscanner/add-ips.sh
+
 ansible-playbook -i ./experiments/internetscanner/inventory ./experiments/internetscanner/stop.yaml
 
 ansible-playbook -i ./experiments/internetscanner/inventory ./experiments/internetscanner/install.yaml && \
     ansible-playbook -i ./experiments/internetscanner/inventory ./experiments/internetscanner/startup.yaml
-
-./experiments/internetscanner/add-ips.sh
 
