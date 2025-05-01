@@ -23,7 +23,9 @@ net = Network('portscanner', addressing==ipv4, routing==static)
 
 router_node = net.node('router', image == 'bullseye-edu')
 
-client_node = net.node('client', image == 'bullseye-edu')
+attacker = net.node('attacker', image == 'bullseye-edu')
+
+client_node = net.node('compromised', image == 'bullseye-edu')
 
 
 lan = net.connect([ router_node, client_node ])
