@@ -9,6 +9,8 @@ fi
 
 ./experiments/internetscanner/add-ips.sh
 
+./install/byob.sh -cc attacker 10.10.10.1 1337
+
 ansible-playbook -i ./experiments/internetscanner/inventory ./experiments/internetscanner/stop.yaml
 
 ansible-playbook -i ./experiments/internetscanner/inventory ./experiments/internetscanner/install.yaml && \
