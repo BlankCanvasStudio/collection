@@ -28,7 +28,7 @@ copy_index=1
 
 for ip in 107.125.{128..255}.{2..255}; do
     version=$(($index % $total_nodes)) 
-    node_index=$(($index % $copies)) 
+    node_index=$(($index % $node_kinds)) 
 
     ssh "${node_types[node_index]}${copy_index}" "sudo ip addr add $ip/17 dev eth1"
 
