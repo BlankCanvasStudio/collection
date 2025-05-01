@@ -38,7 +38,7 @@ for ip in 107.125.{128..255}.{2..255}; do
     index=$(($index + 1))
     copy_index=$((($copy_index + 1) % $copies))
 
-    if [ "$(($index % 200))" = "0" ]; then
+    if [ "$(($index % 500))" = "0" ]; then
         wait
     fi
 done
