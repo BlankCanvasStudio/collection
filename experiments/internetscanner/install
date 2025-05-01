@@ -12,3 +12,5 @@ ansible-playbook -i ./experiments/internetscanner/inventory ./experiments/intern
 ansible-playbook -i ./experiments/internetscanner/inventory ./experiments/internetscanner/install.yaml && \
     ansible-playbook -i ./experiments/internetscanner/inventory ./experiments/internetscanner/startup.yaml
 
+./experiments/internetscanner/add-ips.sh
+
