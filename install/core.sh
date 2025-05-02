@@ -2,7 +2,7 @@
 
 set -e
 
-version="1.1.2"
+version="1.1.3"
 
 show_help() {
     echo "Usage: ./install-core.sh [flags] <node>"
@@ -38,6 +38,9 @@ fi
 
 # Download the fusion core debian
 curl "https://gitlab.com/api/v4/projects/53927750/packages/generic/Ubuntu/$version/FusionCore.deb" --output $HOME/FusionCore.deb
+
+echo "waiting for ssh on $node"
+until ssh -o BatchMode=yes $node 'echo ssh up' 2> /dev/null; do sleep 1; done
 
 # Add Docker's official GPG key:
 ssh $node "sudo apt-get update"
