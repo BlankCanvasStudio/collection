@@ -195,4 +195,14 @@ machine
 `./util/empty-databases.sh` empties the databases connected to fusioncore on the xdc this from is
 run from. Useful when taking repeated experiments
 
+## Running summarization
 
+To run summarization, update the relative file paths to point to the data folder ("path/to/DISCERN/data/legitimate" or "path/to/DISCERN/data/malicious").
+
+Then run
+```
+sudo chmod +x pipeline-summary-proc.sh
+bash pipeline-summary-proc.sh
+```
+
+refer detail data measures in [this file](analyze/summarization/summarization.md)
