@@ -288,9 +288,6 @@ else
     fi
 fi
 
-echo "waiting for everything to attach..."
-sleep 20
-
 echo "building fusion core..."
 ./install/core.sh fusioncore
 

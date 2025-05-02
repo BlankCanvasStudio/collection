@@ -1,0 +1,121 @@
+- name: intall postgres honeypot pattern
+  hosts: mysql mysql_webhosts
+  become: true
+  tasks:
+    - name: stop mysql
+      systemd:
+        name: mariadb
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: intall postgres honeypot pattern
+  hosts: postgres pg_webhosts
+  become: true
+  tasks:
+    - name: stop postgres
+      systemd:
+        name: postgres
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: tomcat server
+  hosts: tomcat
+  become: true
+  tasks:
+    - name: stop tomcat
+      systemd:
+        name: tomcat
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: nginx
+  hosts: nginx
+  become: true
+  tasks:
+    - name: stop nginx
+      systemd:
+        name: nginx
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: Outlook email client
+  hosts: outlook
+  become: true
+  tasks:
+    - name: stop outlook
+      systemd:
+        name: outlook
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: Wordpress instance
+  hosts: wordpress pg_webhosts mysql_webhosts
+  become: true
+  tasks:
+    - name: stop wordpress
+      systemd:
+        name: wordpress
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: DNS
+  hosts: dns
+  become: true
+  tasks:
+    - name: stop dns
+      systemd:
+        name: dns
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: pop3
+  hosts: pop3
+  become: true
+  tasks:
+    - name: stop pop3
+      systemd:
+        name: pop3
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: smtp
+  hosts: smtp
+  become: true
+  tasks:
+    - name: stop smtp
+      systemd:
+        name: smtp
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: telnet
+  hosts: telnet
+  become: true
+  tasks:
+    - name: stop telnet
+      systemd:
+        name: telnet
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+
+- name: vnc
+  hosts: vnc
+  become: true
+  tasks:
+    - name: stop vnc
+      systemd:
+        name: vnc
+        daemon_reload: true
+        state: stopped
+      ignore_errors: true
+

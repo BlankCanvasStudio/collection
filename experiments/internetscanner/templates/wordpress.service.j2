@@ -1,0 +1,16 @@
+[Unit]
+Description=sticky elephant run script
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Restart=always
+RestartSec=1s
+
+ExecStart=/usr/bin/docker run -d --name HoneyPress -p 80:80 honeypress
+
+TimeoutStartSec=300
+TimeoutStopSec=60
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,17 @@
+[Unit]
+Description=sticky elephant run script
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Restart=always
+RestartSec=1s
+
+WorkingDirectory=/home/{{ ansible_user_id }}/tomcat-manager-honeypot
+ExecStart=/bin/bash -c 'java -jar ./target/tomcat-manager-honeypot-0.0.1-SNAPSHOT.jar'
+
+TimeoutStartSec=300
+TimeoutStopSec=60
+
+[Install]
+WantedBy=multi-user.target

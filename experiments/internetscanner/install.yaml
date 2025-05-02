@@ -1,0 +1,246 @@
+- name: install universal dependencies
+  hosts: honeypots
+  tasks: 
+    - name: Update the apt cache
+      become: true
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install git
+      become: true
+      ansible.builtin.package:
+        name: git
+        state: present
+
+    - name: Install pip
+      become: true
+      ansible.builtin.package:
+        name: pip
+        state: present
+
+    - name: systemd services
+      become: true
+      template:
+        src: '{{ item }}.j2'
+        dest: '/etc/systemd/system/{{ item }}'
+        mode: '0644'
+      loop:
+        - dns.service
+        - outlook.service
+        - pop3.service
+        - postgres.service
+        - smtp.service
+        - telnet.service
+        - tomcat.service
+        - vnc.service
+        - wordpress.service
+
+- name: postgres
+  hosts: postgres pg_webhosts
+  tasks:
+    - name: install deps
+      become: true
+      ansible.builtin.shell:
+        cmd: pip install honeypots
+
+# - name: intall postgres honeypot pattern
+#   hosts: postgres
+#   tasks:
+#     - name: Remove previous install
+#       become: true
+#       ansible.builtin.file:
+#         state: absent
+#         path: /home/{{ ansible_user_id }}/sticky_elephant
+# 
+#     - name: Install docker (for hpfeeds)
+#       become: true
+#       ansible.builtin.package:
+#         name: docker.io
+#         state: present
+# 
+#     - name: Install docker for ansible
+#       become: true
+#       ansible.builtin.shell:
+#         cmd: pip install docker
+# 
+#     - name: stop docker containers
+#       become: true
+#       community.docker.docker_container:
+#         name: hpfeeds
+#         state: absent
+#       ignore_errors: true
+# 
+#     - name: clone honeypot repo
+#       ansible.builtin.git:
+#         clone: true
+#         depth: 1
+#         dest: /home/{{ ansible_user_id }}/sticky_elephant
+#         repo: https://github.com/betheroot/sticky_elephant.git
+# 
+#     - name: start hpfeeds docker container
+#       become: true
+#       community.docker.docker_container:
+#         image: hpfeeds/hpfeeds-broker:latest
+#         name: hpfeeds
+#         ports:
+#           - 10000:10000
+#           - 9431:9431
+#         detach: true
+# 
+#     - name: install sticky elephant
+#       become: true
+#       ansible.builtin.shell: 
+#         chdir:  /home/{{ ansible_user_id }}/sticky_elephant
+#         cmd: gem install sticky_elephant
+# 
+# 
+#     - name: install sticky elephant config file
+#       ansible.builtin.copy:
+#         src: ./sticky_elephant.conf
+#         dest: /home/{{ ansible_user_id }}/sticky_elephant/sticky_elephant.conf
+
+
+- name: install mysql
+  hosts: mysql mysql_webhosts
+  become: true
+  tasks:
+    - name: install mysql
+      ansible.builtin.package:
+        name: 
+          - mariadb-server 
+          - mariadb-client 
+          - mariadb-backup
+        state: present
+
+    - name: listen on 0.0.0.0
+      ansible.builtin.lineinfile:
+        path: /etc/mysql/mariadb.conf.d/50-server.cnf
+        regexp: 'bind-address'
+        line: 'bind-address = 0.0.0.0'
+
+    - name: restart mysql
+      systemd:
+        name: mariadb
+        state: restarted
+
+- name: tomcat server
+  hosts: tomcat
+  tasks:
+    - name: clone repo
+      ansible.builtin.git:
+        clone: true
+        depth: 1
+        dest: /home/{{ ansible_user_id }}/tomcat-manager-honeypot
+        repo: https://github.com/helospark/tomcat-manager-honeypot.git
+
+    - name: install maven
+      become: true
+      ansible.builtin.package:
+        name: 
+          - maven
+        state: present
+
+    - name: build project
+      become: true
+      ansible.builtin.shell:
+        chdir:  /home/{{ ansible_user_id }}/tomcat-manager-honeypot
+        cmd: mvn clean install
+
+- name: nginx
+  hosts: nginx
+  tasks:
+    - name: install nginx
+      become: true
+      ansible.builtin.package:
+        name: 
+          - nginx
+        state: present
+
+- name: Outlook email client
+  hosts: outlook
+  tasks:
+    - name: clone repo
+      ansible.builtin.git:
+        clone: true
+        depth: 1
+        dest: /home/{{ ansible_user_id }}/owa-honeypot
+        repo: https://github.com/joda32/owa-honeypot.git
+
+    - name: install deps
+      become: true
+      ansible.builtin.shell:
+        chdir:  /home/{{ ansible_user_id }}/owa-honeypot
+        cmd: pip install -r ./requirements.txt
+
+    - name: upgrade deps
+      become: true
+      ansible.builtin.shell:
+        cmd: sudo pip install --upgrade flask
+
+- name: Wordpress instance
+  hosts: wordpress pg_webhosts mysql_webhosts
+  become: true
+  tasks:
+    - name: Install docker (for wordpress)
+      ansible.builtin.package:
+        name: docker.io
+        state: present
+
+    - name: clone repo
+      ansible.builtin.git:
+        clone: true
+        depth: 1
+        dest: /home/{{ ansible_user_id }}/HoneyPress
+        repo: https://github.com/BlankCanvasStudio/HoneyPress.git
+
+    - name: build docker image
+      ansible.builtin.shell:
+        chdir:  /home/{{ ansible_user_id }}/HoneyPress
+        cmd: sudo docker build --rm -t honeypress .
+
+- name: DNS
+  hosts: dns
+  tasks:
+    - name: install deps
+      become: true
+      ansible.builtin.shell:
+        cmd: pip install honeypots
+
+
+- name: pop3
+  hosts: pop3
+  tasks:
+    - name: install deps
+      become: true
+      ansible.builtin.shell:
+        cmd: pip install honeypots
+
+- name: smtp
+  hosts: smtp
+  tasks:
+    - name: install deps
+      become: true
+      ansible.builtin.shell:
+        cmd: pip install honeypots
+
+- name: telnet
+  hosts: telnet
+  tasks:
+    # Run with: sudo -E python3 -m honeypots --setup telnet:23
+    - name: install deps
+      become: true
+      ansible.builtin.shell:
+        cmd: pip install honeypots
+
+
+- name: vnc
+  hosts: vnc
+  tasks:
+    - name: install deps
+      become: true
+      ansible.builtin.shell:
+        cmd: pip install honeypots
+
+
+
+
