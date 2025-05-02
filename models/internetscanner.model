@@ -29,7 +29,7 @@ client_node = net.node('compromised', image == 'bullseye-edu')
 
 evil_lan = net.connect([ client_node, attacker ])
 evil_lan[attacker].socket.addrs = ip4('10.10.10.1/24')
-evil_lan[client_node].socket.addrs = ip4('10.10.10.1/24')
+evil_lan[client_node].socket.addrs = ip4('10.10.10.2/24')
 
 
 
