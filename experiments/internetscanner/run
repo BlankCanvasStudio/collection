@@ -7,6 +7,7 @@ remote_kill() {
 }
 
 
+sleep 720 && exit 0
 
 ssh attacker "cd ~/byob && ./server.py --background" &
 attackerPid=$1
