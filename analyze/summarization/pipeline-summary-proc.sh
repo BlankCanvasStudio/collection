@@ -2,7 +2,7 @@
 
 # --- Configuration ---
 # Base directory for input file structure AND output structure root
-BASE_DIR="./../../../DISCERN/data/malicious"  # ".../DISCERN/data/malicious" or ".../DISCERN/data/legitimate", 
+BASE_DIR="./../../../DISCERN/data/legitimate"  # ".../DISCERN/data/malicious" or ".../DISCERN/data/legitimate", 
                                         # adjust the relative path according to the directory on your computer
 SCRIPT_DIR="."     # Directory containing the txt-*.py scripts
 
@@ -38,8 +38,10 @@ find "$BASE_DIR" -mindepth 4 -maxdepth 4 -type f -name '*-data.txt' -print0 | wh
 
     # Check if the corresponding Python script actually exists
     if [[ ! -f "$script_file_path" ]]; then
-        echo "   Warning: Corresponding script '$script_file_path' not found. Skipping processing for '$input_filename'."
-        echo "---"
+        if [[ "$script_file_path" != "./txt-logs.py" ]]; then
+            echo "   Warning: Corresponding script '$script_file_path' not found. Skipping processing for '$input_filename'."
+            echo "---"
+        fi
         continue
     fi
 

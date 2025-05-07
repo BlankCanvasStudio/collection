@@ -52,7 +52,7 @@ def process_proc_creation_log(file_path: Path, verbose: bool = False):
     # print(f" Lines processed: {line_num}")
     if parsing_errors > 0: print(f" Lines skipped (errors/invalid data): {parsing_errors} for file: {file_path}.")
     # print(f" Valid process creation records extracted: {len(extracted_records)}")
-    print("-" * 30)
+    # print("-" * 30)
 
     if not extracted_records:
         print("No valid process creation records extracted from the file.")

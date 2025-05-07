@@ -89,7 +89,7 @@ def process_program_cpu_usage(file_path: Path, verbose: bool = False):
     ts_map = {pd.Timestamp(t): pd.Timestamp(next_t) for t, next_t in zip(distinct_timestamps[:-1], distinct_timestamps[1:])}
     df['NextOverallTimeStamp'] = df['TimeStamp'].map(ts_map)
     df['Duration'] = (df['NextOverallTimeStamp'] - df['TimeStamp']).dt.total_seconds()
-    df['Duration'].fillna(0, inplace=True)
+    df.fillna({'Duration': 0}, inplace=True)
     df['Duration'] = df['Duration'].clip(lower=0)
 
 
