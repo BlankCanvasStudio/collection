@@ -19,43 +19,43 @@ run_exp() {
     # record tcpdump
     ssh client "sudo tcpdump -nn -i eth1 -w /home/$(whoami)/results.pcap" &
     tcpdumpPid=$!
-    sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+    sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
     # Start legit traffic
     ssh client "while true; do curl server/index.html > /dev/null; echo ''; echo 'pulling from server'; sleep 1; done" &
     whilePid=$!
-    sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+    sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
      sleep 15
 
     # Run the attack
     ssh attacker "sudo flooder --dst server --src 1.2.0.0 --srcmask 255.255.0.0 --highrate 150 --proto 6 " &
     attackPid=$!
-    sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+    sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
     # take data
     sleep 25
 
     sudo kill $attackPid
-    sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+    sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
     remote_kill attacker "flooder"
-    sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+    sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
     sleep 15
 
     # kill and record everything
     sudo kill $whilePid
-    sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+    sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
     # No remote kill cause this works
 
     sudo kill $tcpdumpPid
-    sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+    sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
     # repmote kill just to be safe
     remote_kill client "tcpdump"
-    sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+    sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
     scp client:/home/$(whoami)/results.pcap $1
-    sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+    sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 }
 
 
@@ -63,16 +63,16 @@ run_exp() {
 sleep 10
 
 run_exp ./with-syn.pcap
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 # disable syn cookies
 ssh server "sudo sysctl -w net.ipv4.tcp_syncookies=0"
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 ssh server "sudo sysctl -w net.ipv4.tcp_max_syn_backlog=10000"
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 run_exp ./no-syn.pcap
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 # pause to record another baseline
 sleep 15

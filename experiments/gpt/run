@@ -1,9 +1,9 @@
 #!/bin/bash
 
 ssh learner "sudo apt-get install -y git python3-pip"
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 ssh learner "sudo apt install -y docker.io"
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 sleep 3
 
@@ -11,17 +11,17 @@ sleep 3
 # ssh learner "pip3 install nltk torch fire brainscore"
 
 ssh learner "git clone 'https://github.com/openai/gpt-2.git'"
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 scp ./experiments/gpt/Dockerfile.cpu learner:~/gpt-2/Dockerfile.cpu
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 ssh learner "cd gpt-2 && sudo docker build --tag gpt-2 -f Dockerfile.cpu ."
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 $(sleep 450 && ssh learner "sudo docker kill \$(sudo docker ps -q)") &
 
-sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 ssh learner "sudo docker run gpt-2 /bin/bash -c 'python3 src/generate_unconditional_samples.py | tee /tmp/samples'" || true
 
 
