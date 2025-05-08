@@ -102,6 +102,42 @@ def process_all_pairs_file(file_path: Path, verbose: bool = False):
     df['Length'] = pd.to_numeric(df['Length'], errors='coerce').fillna(0)
     df.dropna(subset=['PacketTimestamp', 'IP_A', 'IP_B'], inplace=True)
 
+        # --- Overall Statistics Calculation ---
+    overall_total_analyzed_packets = len(df)
+    overall_stats = {
+        'Overall Packet Count': 0,
+        'Overall Total Bytes': 0,
+        'Overall Average Packet Size (Bytes)': 0.0,
+        'Overall Capture Duration (Seconds)': 0.0,
+        'Overall Average Rate (Mbps)': 0.0
+    }
+
+    if overall_total_analyzed_packets > 0:
+        overall_total_bytes = df['Length'].sum()
+        overall_avg_packet_size = (overall_total_bytes / overall_total_analyzed_packets) if overall_total_analyzed_packets > 0 else 0.0
+        
+        min_timestamp = df['PacketTimestamp'].min()
+        max_timestamp = df['PacketTimestamp'].max()
+        overall_duration_seconds = 0.0
+        overall_avg_rate_mbps = 0.0
+
+        if pd.notna(min_timestamp) and pd.notna(max_timestamp):
+            duration_timedelta = max_timestamp - min_timestamp
+            overall_duration_seconds = duration_timedelta.total_seconds()
+
+            if overall_duration_seconds > 0:
+                overall_avg_rate_mbps = (overall_total_bytes * 8.0) / (overall_duration_seconds * 1_000_000.0)
+            elif overall_total_bytes > 0: # Duration is 0 (e.g. all in same sec), but data exists
+                overall_avg_rate_mbps = (overall_total_bytes * 8.0) / (1.0 * 1_000_000.0) # Assume 1s for rate calc
+        
+        overall_stats.update({
+            'Overall Packet Count': int(overall_total_analyzed_packets),
+            'Overall Total Bytes': int(overall_total_bytes),
+            'Overall Average Packet Size (Bytes)': float(overall_avg_packet_size),
+            'Overall Capture Duration (Seconds)': float(overall_duration_seconds),
+            'Overall Average Rate (Mbps)': float(overall_avg_rate_mbps)
+        })
+
     if df.empty:
         print("DataFrame is empty after initial processing and cleaning for file: {file_path}.")
         return None
@@ -155,7 +191,7 @@ def process_all_pairs_file(file_path: Path, verbose: bool = False):
         'TotalActiveSeconds', 'AvgRateMbps', 'PeakRateMbps'
     ]]
 
-    return summary_df
+    return summary_df, overall_stats
 
 if __name__ == "__main__":
     
@@ -182,25 +218,46 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    final_summary = process_all_pairs_file(args.input_file, verbose=args.verbose)
+    final_summary_df, overall_stats = process_all_pairs_file(args.input_file, verbose=args.verbose)
     # final_summary = process_all_pairs_file(INPUT_FILE_PATH, verbose=VERBOSE_LOGGING)
 
-    if final_summary is not None and not final_summary.empty:
-        # print("\n--- Summary Per Communication Pair {IP_A, IP_B} ---")
-        pd.set_option('display.max_rows', 200)
-        pd.set_option('display.max_columns', None)
-        pd.set_option('display.width', 1200)
-        pd.set_option('display.float_format', '{:.3f}'.format)
+    # if final_summary is not None and not final_summary.empty:
+    #     # print("\n--- Summary Per Communication Pair {IP_A, IP_B} ---")
+    #     pd.set_option('display.max_rows', 200)
+    #     pd.set_option('display.max_columns', None)
+    #     pd.set_option('display.width', 1200)
+    #     pd.set_option('display.float_format', '{:.3f}'.format)
 
         # print(f"Sorting results by '{SORT_BY_COLUMN}' (descending)...")
-        final_summary_sorted = final_summary.sort_values(by=SORT_BY_COLUMN, ascending=False)
+        # final_summary_sorted = final_summary.sort_values(by=SORT_BY_COLUMN, ascending=False)
         # print(final_summary_sorted)
 
-        if args.output:
-            try:
-                final_summary_sorted.to_csv(args.output, index=False)
-                # print(f"\nSummary saved to: {args.output}")
-            except Exception as e:
-                print(f"\nError saving summary to CSV: {e} for file: {args.input_file}")
-    else:
-        print("\nNo communication summary statistics generated.")
+    if args.output:
+        try:
+            with open(args.output, 'w', newline='') as f:
+                if overall_stats:
+                    f.write(f"# Overall Packet Count: {overall_stats.get('Overall Packet Count', 'N/A')}\n")
+                    f.write(f"# Overall Total Bytes: {overall_stats.get('Overall Total Bytes', 'N/A')}\n")
+                    f.write(f"# Overall Average Packet Size (Bytes): {overall_stats.get('Overall Average Packet Size (Bytes)', 0.0):.2f}\n")
+                    f.write(f"# Overall Capture Duration (Seconds): {overall_stats.get('Overall Capture Duration (Seconds)', 0.0):.3f}\n")
+                    f.write(f"# Overall Average Rate (Mbps): {overall_stats.get('Overall Average Rate (Mbps)', 0.0):.3f}\n")
+                    
+
+                    if final_summary_df is not None and not final_summary_df.empty:
+                        f.write("\n")
+
+                if final_summary_df is not None and not final_summary_df.empty:
+                    final_summary_sorted = final_summary_df.sort_values(by=SORT_BY_COLUMN, ascending=False)
+                    final_summary_sorted.to_csv(f, index=False, header=True)
+                elif overall_stats and args.verbose: # Only overall stats written
+                    print(f"Verbose: Overall statistics written to {args.output}. No per-pair data to write.")
+
+            if args.verbose:
+                print(f"Verbose: Network summary CSV (with overall stats) saved to: {args.output}")
+
+        except Exception as e:
+            if args.verbose:
+                print(f"Verbose: Error saving summary to CSV: {e} for file: {args.input_file}")
+            raise e 
+    elif args.verbose:
+        print(f"Verbose: No output file specified. Results not saved. Run with -o <filename.csv> to save.")
