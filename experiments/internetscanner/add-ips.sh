@@ -28,7 +28,7 @@ copy_index=0
 
 for ip in 107.125.{128..255}.{2..255}; do
     # Drop 1/4 of all IPs randomly
-    if [ "$((RANDOM % 10))" != "0" ]; then
+    if [ "$((RANDOM % 10))" == "0" ]; then
         (
             node_index=$((RANDOM % $node_kinds))
             version=$(($index % $total_nodes)) 

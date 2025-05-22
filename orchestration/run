@@ -214,7 +214,7 @@ for (( i = 0; i < $iterations; i++ )); do
 
     # Run an iteration of the experiment
     echo "running experiment loop"
-    execute "$xdc" "./experiments/$command/run"
+    (execute "$xdc" "./experiments/$command/run")
 
     # Save the data to the local machine
     echo "exfiltrating data..."
