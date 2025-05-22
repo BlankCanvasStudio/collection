@@ -8,7 +8,7 @@ remote_kill() {
 }
 
 
-(sleep 7200 && kill $$) &
+(sleep 3600 && kill $$) &
 
 ssh attacker "cd ~/byob && ./server.py --background" &
 sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
