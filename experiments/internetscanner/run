@@ -1,5 +1,7 @@
 #!/bin/bash
 
+trap 'echo "Gracefully exiting"; exit 0' SIGTERM SIGINT
+
 remote_kill() {
     node=$1
     prog=$2
