@@ -24,7 +24,7 @@ c_pid=$!
 
 sleep 5 # let the victim connect
 
-(sleep 60 && echo "killing" && (kill -9 $c_pid; kill -9 $c_pid; kill -9 $$)) &
+(sleep 60 && echo "killing" && (kill -9 $c_pid; kill -9 $a_pid; kill -9 $$)) &
 
 for ip in 107.125.{128..254}.{1..254}; do
     ssh attacker "byossh -t 10 compromised portscanner $ip >> /tmp/port-results && cat /tmp/port-results"
