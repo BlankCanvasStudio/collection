@@ -18,8 +18,8 @@ def process_program_cpu_usage(file_path: Path, verbose: bool = False):
 
     extracted_records = []
     line_num = 0
-    parsing_errors = 0
-    processed_lines = 0
+    # parsing_errors = 0 # Not used
+    # processed_lines = 0 # Not used
 
     try:
         with open(file_path, 'r') as f:
@@ -40,10 +40,10 @@ def process_program_cpu_usage(file_path: Path, verbose: bool = False):
                         'Name': name,
                         'CpuPercent': float(cpu_percent)
                     })
-                    processed_lines += 1
+                    # processed_lines += 1
 
                 except Exception as e:
-                    parsing_errors += 1
+                    # parsing_errors += 1
                     if verbose: print(f"Warning: Skipping line {line_num} due to error: {e}")
                     continue
 
@@ -52,7 +52,7 @@ def process_program_cpu_usage(file_path: Path, verbose: bool = False):
         return None
 
     if not extracted_records:
-        print("No valid process CPU records extracted. for file: {file_path}")
+        print(f"No valid process CPU records extracted for file: {file_path}")
         return None
 
     df = pd.DataFrame(extracted_records)
@@ -61,35 +61,32 @@ def process_program_cpu_usage(file_path: Path, verbose: bool = False):
     df.dropna(subset=['TimeStamp', 'Name', 'CpuPercent'], inplace=True)
 
     if df.empty:
-        print("DataFrame is empty after initial processing and cleaning for file: {file_path}.")
+        print(f"DataFrame is empty after initial processing and cleaning for file: {file_path}.")
         return None
 
     # --- Calculate Total Observation Duration ---
     distinct_timestamps = df['TimeStamp'].sort_values().unique()
 
     if len(distinct_timestamps) < 2:
-         print("Warning: Need at least two distinct measurement timestamps to calculate time-weighted average for file: {file_path}.")
-         summary = df.groupby('Name')['CpuPercent'].agg(MaxCpuUsage='max').reset_index()
-         summary['TimeWeightedAvgCpuPercent'] = np.nan
-         return summary[['Name', 'TimeWeightedAvgCpuPercent', 'MaxCpuUsage']]
-    else:
-         min_ts = pd.to_datetime(distinct_timestamps.min())
-         max_ts = pd.to_datetime(distinct_timestamps.max()) # Last timestamp where *any* measurement occurred
+         print(f"Warning: Need at least two distinct measurement timestamps to calculate time-weighted average for file: {file_path}.")
+         # Early return removed to allow flow-through calculations resulting in 0 duration and NaN averages.
+    
+    # min_ts and max_ts calculation will proceed. If len(distinct_timestamps) < 2, min_ts will equal max_ts.
+    min_ts = pd.to_datetime(distinct_timestamps.min()) if len(distinct_timestamps) > 0 else pd.NaT
+    max_ts = pd.to_datetime(distinct_timestamps.max()) if len(distinct_timestamps) > 0 else pd.NaT
 
-    total_duration_seconds = (max_ts - min_ts).total_seconds()
+    total_duration_seconds = (max_ts - min_ts).total_seconds() if pd.notna(min_ts) and pd.notna(max_ts) else 0.0
+    
     # print(f"Total observation time span: {total_duration_seconds:.2f} seconds (from {min_ts} to {max_ts})")
 
-    if total_duration_seconds <= 0:
-        print("Warning: Total duration is zero or negative. Cannot calculate time-weighted average for file: {file_path}")
-        summary = df.groupby('Name')['CpuPercent'].agg(MaxCpuUsage='max').reset_index()
-        summary['TimeWeightedAvgCpuPercent'] = np.nan
-        return summary[['Name', 'TimeWeightedAvgCpuPercent', 'MaxCpuUsage']]
-
+    if total_duration_seconds <= 0: # This will also be true if len(distinct_timestamps) < 2
+        print(f"Warning: Total observation duration is {total_duration_seconds:.2f} seconds. Meaningful time-weighted average might not be calculable (e.g., will be NaN) for file: {file_path}.")
+        # Early return removed. Calculations will proceed with 0 duration where appropriate.
 
     ts_map = {pd.Timestamp(t): pd.Timestamp(next_t) for t, next_t in zip(distinct_timestamps[:-1], distinct_timestamps[1:])}
     df['NextOverallTimeStamp'] = df['TimeStamp'].map(ts_map)
     df['Duration'] = (df['NextOverallTimeStamp'] - df['TimeStamp']).dt.total_seconds()
-    df.fillna({'Duration': 0}, inplace=True)
+    df.fillna({'Duration': 0}, inplace=True) # For last timestamps in series, or if ts_map is empty
     df['Duration'] = df['Duration'].clip(lower=0)
 
 
@@ -97,45 +94,91 @@ def process_program_cpu_usage(file_path: Path, verbose: bool = False):
 
     if verbose:
         print("\n--- DataFrame with Corrected Durations and Weights Head ---")
-        df_sorted = df.sort_values(by=['Name', 'TimeStamp'])
-        print(df_sorted[['Name', 'TimeStamp', 'CpuPercent', 'NextOverallTimeStamp', 'Duration', 'CpuWeighted']].head(10))
+        # Sort by Name first for grouped view if multiple processes share timestamps
+        df_sorted_verbose = df.sort_values(by=['Name', 'TimeStamp'])
+        print(df_sorted_verbose[['Name', 'TimeStamp', 'CpuPercent', 'NextOverallTimeStamp', 'Duration', 'CpuWeighted']].head(10))
 
-
-    # --- Aggregation ---
+    # --- Aggregation for individual processes ---
     summary = df.groupby('Name').agg(
         TotalCpuWeighted=('CpuWeighted', 'sum'),
         MaxCpuUsage=('CpuPercent', 'max'),
-        Duration=('Duration', 'sum'),
-        DataPoints=('CpuPercent', 'count')
-    ).reset_index().sort_values(by='TotalCpuWeighted',ascending=False)
+        Duration=('Duration', 'sum'), # Sum of interval durations where the process was active
+        DataPoints=('CpuPercent', 'count') # Number of measurements for the process
+    ).reset_index()
 
-    # Sum(CPU_i * Duration_i) / TotalDuration
-    summary['AvgCpuPercent'] = summary['TotalCpuWeighted'] / summary['Duration']
-
-    # print("Calculations complete.")
+    # Calculate AvgCpuPercent, handling division by zero if total Duration for a process is 0
+    with np.errstate(divide='ignore', invalid='ignore'):
+        summary['AvgCpuPercent'] = summary['TotalCpuWeighted'] / summary['Duration']
+    summary['AvgCpuPercent'] = np.where(summary['Duration'] == 0, np.nan, summary['AvgCpuPercent'])
+    
+    summary = summary.sort_values(by='TotalCpuWeighted',ascending=False) # Keep sorting by weight before dropping it
 
     summary = summary[[
         'Name','Duration', 'AvgCpuPercent', 'MaxCpuUsage', 'DataPoints'
     ]]
 
+    # --- Add Overall System Record (excluding discern-file-so timestamps) ---
+    overall_name = "OverallSystemRecord"
+    overall_duration_val = 0.0
+    overall_avg_cpu_val = np.nan
+    overall_max_cpu_val = np.nan
+    overall_points_val = 0
+
+    # df must have 'Duration' column at this point.
+    discern_file_so_timestamps = df[df['Name'] == 'discern-file-so']['TimeStamp'].unique()
+    df_overall = df[~df['TimeStamp'].isin(discern_file_so_timestamps)].copy()
+
+    if not df_overall.empty:
+        # Group by timestamp to sum CPU from all other processes, and get the interval duration
+        system_metrics_at_ts = df_overall.groupby('TimeStamp').agg(
+            TotalSystemCpuThisInstant=('CpuPercent', 'sum'),
+            # Duration is the same for all entries at a given TimeStamp, as it's based on NextOverallTimeStamp
+            IntervalDuration=('Duration', 'first')
+        ).reset_index()
+
+        if not system_metrics_at_ts.empty:
+            system_metrics_at_ts['SystemCpuWeighted'] = system_metrics_at_ts['TotalSystemCpuThisInstant'] * system_metrics_at_ts['IntervalDuration']
+
+            overall_total_cpu_weighted_sum = system_metrics_at_ts['SystemCpuWeighted'].sum()
+            sum_of_interval_durations = system_metrics_at_ts['IntervalDuration'].sum()
+
+            if sum_of_interval_durations > 0:
+                overall_avg_cpu_val = overall_total_cpu_weighted_sum / sum_of_interval_durations
+            
+            overall_max_cpu_val = system_metrics_at_ts['TotalSystemCpuThisInstant'].max()
+            overall_duration_val = sum_of_interval_durations
+            # DataPoints for overall: number of unique timestamp intervals with non-zero duration considered
+            overall_points_val = int(system_metrics_at_ts[system_metrics_at_ts['IntervalDuration'] > 0]['TimeStamp'].nunique())
+    
+    overall_system_record_data = {
+        'Name': overall_name,
+        'Duration': overall_duration_val,
+        'AvgCpuPercent': overall_avg_cpu_val,
+        'MaxCpuUsage': overall_max_cpu_val,
+        'DataPoints': overall_points_val
+    }
+    overall_system_df = pd.DataFrame([overall_system_record_data])
+    summary = pd.concat([summary, overall_system_df], ignore_index=True)
+
+    # print("Calculations complete.")
     return summary
 
 
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(
-        description="Parse and process the (json-like) data collected from the discern project to display the summary",
+        description="Parse and process (json-like) data collected from CPU monitoring to display summary statistics.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
         )
     parser.add_argument(
         "input_file", 
         type=Path,
-        help="Path to the input file change log (proc-cpu-data.txt)"
+        help="Path to the input file (e.g., proc-cpu-data.txt)"
     )
     parser.add_argument(
         "-o", "--output",
         type=Path,
-        default='proc-cpu-summary.csv',
+        default='proc_cpu_summary.csv',
         help="Path to save the output summary CSV file."
     )
     parser.add_argument(
@@ -148,22 +191,24 @@ if __name__ == "__main__":
 
     final_summary = process_program_cpu_usage(args.input_file, verbose=args.verbose)
     
-    # final_summary = process_program_cpu_usage(INPUT_FILE_PATH, verbose=VERBOSE_LOGGING)
     if final_summary is not None and not final_summary.empty:
         
-        pd.set_option('display.max_rows', None) # Show all rows
+        pd.set_option('display.max_rows', None) 
         pd.set_option('display.max_columns', None)
         pd.set_option('display.width', 1000)
-        pd.set_option('display.float_format', '{:.3f}'.format) # Format floats
-        final_summary.sort_values(by='AvgCpuPercent', ascending=False)
-        # print(final_summary.sort_values(by='AvgCpuPercent', ascending=False))
+        pd.set_option('display.float_format', '{:.3f}'.format)
+        
+        # Sort before printing to console
+        final_summary_sorted_for_print = final_summary.sort_values(by='AvgCpuPercent', ascending=False, na_position='last')
+        # print("\n--- Program CPU Usage Summary ---")
+        # print(final_summary_sorted_for_print)
 
-        # --- Optional: Save to CSV File ---
         if args.output:
             try:
-                final_summary.to_csv(args.output, index=False)
+                # Save the potentially unsorted (or as-calculated) summary to CSV
+                final_summary.to_csv(args.output, index=False, float_format='%.3f')
                 # print(f"\nSummary saved to: {args.output}")
             except Exception as e:
                 print(f"\nError saving summary to CSV: {e} for file: {args.input_file}")
     else:
-        print("\nNo program CPU usage summary statistics generated.")
+        print(f"\nNo program CPU usage summary statistics generated for {args.input_file}.")
