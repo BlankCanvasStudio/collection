@@ -3,17 +3,105 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 import argparse
-
+import matplotlib.pyplot as plt
+# import seaborn as sns
 
 
 # INPUT_FILE_PATH = Path("network-data.txt")
 # OUTPUT_CSV_FILE = Path("net-res.csv")
 # VERBOSE_LOGGING = False
 SORT_BY_COLUMN = 'TotalBytes'
+DEFAULT_TIME_BIN_ACTIVITY_PLOT = "3s"
 
 def create_canonical_pair(ip1, ip2):
     """Creates a sorted tuple representing the IP pair."""
     return tuple(sorted((ip1, ip2)))
+
+def draw_time_activity_plot(df: pd.DataFrame, ax1: plt.Axes, time_bin: str, verbose: bool = False):
+    
+    if df.empty or 'PacketTimestamp' not in df.columns or 'Length' not in df.columns:
+        if verbose: print("Verbose: Time activity plot cannot be drawn, DataFrame is empty or required columns missing.")
+        ax1.text(0.5, 0.5, "No data for time activity plot", ha='center', va='center')
+        ax1.set_title('Network Activity Over Time')
+        return
+    if len(df) < 2:
+        if verbose: print(f"Verbose: Not enough data points (found {len(df)}) for time activity plot with bin '{time_bin}'.")
+        ax1.text(0.5, 0.5, f"Not enough data for plot (bin: {time_bin})", ha='center', va='center')
+        ax1.set_title('Network Activity Over Time')
+        return
+
+    df_ts = df.copy()
+    df_ts['PacketTimestamp'] = pd.to_datetime(df_ts['PacketTimestamp'])
+    df_ts = df_ts.set_index('PacketTimestamp')
+    
+    try:
+        aggregated_data = df_ts['Length'].resample(time_bin).agg(['mean', 'count'])
+        aggregated_data.rename(columns={'mean': 'AvgPacketSize', 'count': 'PacketCount'}, inplace=True)
+        
+        aggregated_data['AvgPacketSize'] = aggregated_data['AvgPacketSize'].fillna(0)
+        aggregated_data['PacketCount'] = aggregated_data['PacketCount'].fillna(0).astype(int)
+
+        if aggregated_data.empty:
+            if verbose: print(f"Verbose: No data to plot after resampling with bin '{time_bin}'.")
+            ax1.text(0.5, 0.5, f"No data after resampling (bin: {time_bin})", ha='center', va='center')
+            ax1.set_title(f'Network Activity Over Time (Bin: {time_bin})')
+            return
+
+
+        if aggregated_data.index.empty:
+            if verbose: print(f"Verbose: No time index data after resampling for bin '{time_bin}'.")
+            return
+            
+        start_time = aggregated_data.index[0]
+
+        time_offsets_seconds = (aggregated_data.index - start_time).total_seconds()
+
+
+        color_bar = 'skyblue'
+        
+        try:
+            bin_duration_seconds = pd.to_timedelta(time_bin).total_seconds()
+            bar_width_numeric = bin_duration_seconds * 0.8 
+        except ValueError:
+            if verbose: print(f"Verbose: Could not parse time_bin '{time_bin}' for dynamic bar width. Using default width of 0.8*bin_value.")
+
+            numeric_part_str = ''.join(filter(str.isdigit, time_bin))
+            if numeric_part_str:
+                bar_width_numeric = float(numeric_part_str) * 0.8
+            else:
+                bar_width_numeric = 1.0 * 0.8 
+        
+        ax1.bar(time_offsets_seconds, aggregated_data['AvgPacketSize'],
+                width=bar_width_numeric,
+                color=color_bar, alpha=0.7, label='Avg Packet Size (Bytes)')
+        ax1.set_xlabel(f"Time from start (seconds, binned every {time_bin})")
+        ax1.set_ylabel("Average Packet Size (Bytes)", color=color_bar)
+        ax1.tick_params(axis='y', labelcolor=color_bar)
+
+
+        ax2 = ax1.twinx() 
+        color_line = 'coral'
+        ax2.plot(time_offsets_seconds, aggregated_data['PacketCount'],
+                 color=color_line, marker='o', linestyle='-', linewidth=2, markersize=4, label='Packet Count')
+        ax2.set_ylabel("Packet Count", color=color_line)
+        ax2.tick_params(axis='y', labelcolor=color_line)
+        ax2.set_ylim(bottom=0) 
+
+        ax1.set_title(f"Network Activity Over Time (Bin: {time_bin})", pad=20)
+        
+        lines, labels = ax1.get_legend_handles_labels()
+        lines2, labels2 = ax2.get_legend_handles_labels()
+        ax2.legend(lines + lines2, labels + labels2, loc='upper right')
+
+        ax1.grid(True, linestyle='--', alpha=0.5, axis='y')
+
+    except Exception as e:
+        if verbose: print(f"Verbose: Error drawing time activity plot: {e}")
+        ax1.text(0.5, 0.5, f"Error: {e}", ha='center', va='center', color='red', wrap=True)
+        ax1.set_title(f'Network Activity Over Time (Bin: {time_bin})')
+
+
+
 
 def process_all_pairs_file(file_path: Path, verbose: bool = False):
     """
@@ -23,7 +111,7 @@ def process_all_pairs_file(file_path: Path, verbose: bool = False):
     """
     if not file_path.is_file():
         print(f"Error: Input file not found at {file_path}")
-        return None
+        return None, None, None
 
     # print(f"Processing file: {file_path}")
     # print(f"Analyzing ALL communication pairs...")
@@ -48,16 +136,24 @@ def process_all_pairs_file(file_path: Path, verbose: bool = False):
 
                     processed_lines += 1
                     for packet in packets:
+                        arp_flag = False
                         packet_ts = packet.get("TimeStamp")
                         packet_len = packet.get("Length")
                         ip_data = packet.get("IP")
+                        if not ip_data:
+                            ip_data = packet.get("ARP")
+                            arp_flag = True
 
                         if packet_ts is None or packet_len is None or not ip_data:
                             packets_skipped_no_ip += 1
                             continue
-
-                        src_ip = ip_data.get("SRCIP")
-                        dst_ip = ip_data.get("DSTIP")
+                        
+                        if(arp_flag):
+                            src_ip = ip_data.get("SrcProtAdd")
+                            dst_ip = ip_data.get("DstProtAdd")
+                        else:
+                            src_ip = ip_data.get("SRCIP")
+                            dst_ip = ip_data.get("DSTIP")
 
                         if not src_ip or not dst_ip:
                             packets_skipped_no_ip += 1
@@ -84,16 +180,16 @@ def process_all_pairs_file(file_path: Path, verbose: bool = False):
 
     except FileNotFoundError:
         print(f"Error: Input file not found at {file_path}")
-        return None
+        return None,None,None
     except Exception as e:
         print(f"An error occurred during file reading: {e} for file: {file_path}.")
-        return None
+        return None,None,None
 
     if parsing_errors > 0: print(f" Lines skipped (parsing error): {parsing_errors} for file: {file_path}")
 
     if not extracted_packets:
         print("No valid IP packet data for analysis was extracted for file: {file_path}.")
-        return None
+        return None,None,None
 
 
     # print("Converting extracted data to DataFrame...")
@@ -140,7 +236,7 @@ def process_all_pairs_file(file_path: Path, verbose: bool = False):
 
     if df.empty:
         print("DataFrame is empty after initial processing and cleaning for file: {file_path}.")
-        return None
+        return None,None,None
 
     # print(f"DataFrame created with {len(df)} relevant packet entries.")
     if verbose:
@@ -191,7 +287,7 @@ def process_all_pairs_file(file_path: Path, verbose: bool = False):
         'TotalActiveSeconds', 'AvgRateMbps', 'PeakRateMbps'
     ]]
 
-    return summary_df, overall_stats
+    return summary_df, overall_stats,df
 
 if __name__ == "__main__":
     
@@ -218,7 +314,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    final_summary_df, overall_stats = process_all_pairs_file(args.input_file, verbose=args.verbose)
+    final_summary_df, overall_stats, plotting_df= process_all_pairs_file(args.input_file, verbose=args.verbose)
     # final_summary = process_all_pairs_file(INPUT_FILE_PATH, verbose=VERBOSE_LOGGING)
 
     # if final_summary is not None and not final_summary.empty:
@@ -261,3 +357,28 @@ if __name__ == "__main__":
             raise e 
     elif args.verbose:
         print(f"Verbose: No output file specified. Results not saved. Run with -o <filename.csv> to save.")
+
+    if plotting_df is not None and not plotting_df.empty:
+        
+        plot_output_dir = args.output.parent
+        combined_plot_file = plot_output_dir / f"network.png"
+        
+        if args.verbose: 
+            print(f"Verbose: Generating combined analysis plot: {combined_plot_file}")
+
+        fig, ax1 = plt.subplots(figsize=(15, 7))
+
+        draw_time_activity_plot(plotting_df, ax1, 
+                                time_bin=DEFAULT_TIME_BIN_ACTIVITY_PLOT, 
+                                verbose=args.verbose)
+        
+        try:
+            plt.savefig(combined_plot_file)
+            if args.verbose: print(f"Verbose: Combined analysis plot saved to {combined_plot_file}")
+        except Exception as e:
+            if args.verbose: print(f"Verbose: Error saving combined analysis plot: {e}")
+        finally:
+            plt.close(fig)
+            
+    elif args.verbose:
+        print("Verbose: No packet data available to generate combined plot.")

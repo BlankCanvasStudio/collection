@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # --- Configuration ---
-# Base directory for input file structure AND output structure root
-BASE_DIR="./../../../DISCERN/data/malicious"  # ".../DISCERN/data/malicious" or ".../DISCERN/data/legitimate", 
+
+BASE_DIR="./../../../DISCERN/data/legitimate"  # ".../DISCERN/data/malicious" or ".../DISCERN/data/legitimate", 
                                         # adjust the relative path according to the directory on your computer
 SCRIPT_DIR="."     # Directory containing the txt-*.py scripts
 

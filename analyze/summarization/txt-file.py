@@ -14,7 +14,7 @@ def process_file_change_log(file_path: Path, verbose: bool = False):
         print(f"Error: Input file not found at {file_path}")
         return None
 
-    print(f"Processing file change log: {file_path}...")
+    # print(f"Processing file change log: {file_path}...")
 
     extracted_records = []
     line_num = 0
