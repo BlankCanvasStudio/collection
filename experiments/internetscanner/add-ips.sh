@@ -28,7 +28,7 @@ copy_index=0
 
 for ip in 107.125.{128..255}.{2..255}; do
     # Drop 1/4 of all IPs randomly
-    if [ "$((RANDOM % 10))" != "0" ]; then
+    if [ "$((RANDOM % 10))" == "0" ]; then
         (
             node_index=$((RANDOM % $node_kinds))
             version=$(($index % $total_nodes)) 
@@ -41,8 +41,8 @@ for ip in 107.125.{128..255}.{2..255}; do
     index=$(($index + 1))
     copy_index=$((($copy_index + 1) % $copies))
 
-    if [ "$(($index % 500))" = "0" ]; then
-        echo "Added 500 ips"
+    if [ "$(($index % 250))" = "0" ]; then
+        echo "Added 250 ips"
         wait
     fi
 done
