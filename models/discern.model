@@ -3,9 +3,4 @@ from mergexp import *
 net = Network('crypto', addressing==ipv4, routing==static)
 nodes = [net.node(name, image == 'discern') for name in [ 'attacker' ]]
 
-fusioncore = net.node('fusioncore', image == 'bullseye-edu', memory.capacity>=gb(8))
-
-for node in nodes:
-	net.connect([fusioncore, node])
-
 experiment(net)
