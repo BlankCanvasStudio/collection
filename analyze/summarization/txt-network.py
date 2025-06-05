@@ -35,11 +35,11 @@ def draw_time_activity_plot(df: pd.DataFrame, ax1: plt.Axes, time_bin: str, verb
     df_ts = df_ts.set_index('PacketTimestamp')
     
     try:
-        aggregated_data = df_ts['Length'].resample(time_bin).agg(['mean', 'count'])
-        aggregated_data.rename(columns={'mean': 'AvgPacketSize', 'count': 'PacketCount'}, inplace=True)
+        aggregated_data = df_ts['Length'].resample(time_bin).agg(['mean', 'sum'])
+        aggregated_data.rename(columns={'mean': 'AvgPacketSize', 'sum': 'TotalPacketSize'}, inplace=True)
         
         aggregated_data['AvgPacketSize'] = aggregated_data['AvgPacketSize'].fillna(0)
-        aggregated_data['PacketCount'] = aggregated_data['PacketCount'].fillna(0).astype(int)
+        aggregated_data['TotalPacketSize'] = aggregated_data['TotalPacketSize'].fillna(0).astype(int)
 
         if aggregated_data.empty:
             if verbose: print(f"Verbose: No data to plot after resampling with bin '{time_bin}'.")
@@ -81,9 +81,9 @@ def draw_time_activity_plot(df: pd.DataFrame, ax1: plt.Axes, time_bin: str, verb
 
         ax2 = ax1.twinx() 
         color_line = 'coral'
-        ax2.plot(time_offsets_seconds, aggregated_data['PacketCount'],
-                 color=color_line, marker='o', linestyle='-', linewidth=2, markersize=4, label='Packet Count')
-        ax2.set_ylabel("Packet Count", color=color_line)
+        ax2.plot(time_offsets_seconds, aggregated_data['TotalPacketSize'],
+                 color=color_line, marker='o', linestyle='-', linewidth=2, markersize=4, label='Total Packet Size (Bytes)')
+        ax2.set_ylabel("Total Packet Size (Bytes)", color=color_line)
         ax2.tick_params(axis='y', labelcolor=color_line)
         ax2.set_ylim(bottom=0) 
 
