@@ -1,6 +1,7 @@
 import os
 import json
 import pandas as pd
+import itertools
 
 def generate_unified_dev_id(file1_path, file2_path, default_id="unified.dev.id"):
     """
@@ -92,7 +93,7 @@ def find_earliest_timestamp(filepath):
     
     return float('inf')
 
-def process_network_data(file1_path, file2_path):
+def process_network_data(file1_path, file2_path,time_offset_file1, time_offset_file2):
     """
     A separate, isolated pipeline for processing network-data.txt to preserve
     the accuracy of nested timestamps.
@@ -146,9 +147,11 @@ def process_network_data(file1_path, file2_path):
             
     return all_data
 
-def process_file_data(file1_path,file2_path):
+def process_file_data(file1_path,file2_path,time_offset_file1, time_offset_file2):
     all_data = []
     min_timestamp = find_earliest_timestamp(file1_path)
+    if(min_timestamp == float('inf')):
+        min_timestamp = find_earliest_timestamp(file2_path)
     local_min = find_earliest_timestamp(file2_path)
     unified_dev_id = generate_unified_dev_id(file1_path, file2_path)
     try:
@@ -204,7 +207,7 @@ def process_file_data(file1_path,file2_path):
         
     return all_data
 
-def process_and_combine_data(folder1, folder2, output_folder):
+def process_and_combine_data(folder1, folder2, output_folder,time_offset_file1, time_offset_file2):
     """
     Main processing function that merges files using your original timestamp logic
     and then calls fine-tuning functions as needed.
@@ -228,13 +231,14 @@ def process_and_combine_data(folder1, folder2, output_folder):
 
         # seperated processing for network and file data
         if filename == "network-data.txt":
-            all_data = process_network_data(file1_path, file2_path)
+            all_data = process_network_data(file1_path, file2_path,time_offset_file1, time_offset_file2)
             
         elif filename == "file-data.txt":
-            all_data = process_file_data(file1_path,file2_path)
+            all_data = process_file_data(file1_path,file2_path, time_offset_file1, time_offset_file2)
             
             
         else:
+            # bug found: if file1 is skipped, file2 does not obtain the propper min_timestamp
             unified_dev_id = generate_unified_dev_id(file1_path, file2_path)
             try:
                 with open(file1_path, 'r') as f:
@@ -258,6 +262,8 @@ def process_and_combine_data(folder1, folder2, output_folder):
             try:
                 with open(file2_path, 'r') as f:
                     first_line = f.readline()
+                    if(min_timestamp==float('inf')):
+                        min_timestamp = int(first_line["TimeStamp"])
                     if not first_line.strip():
                         local_min = 0 
                         f.seek(0)
@@ -291,7 +297,7 @@ def process_and_combine_data(folder1, folder2, output_folder):
             print(f"Warning: No data to write for {filename}.")
             open(output_file_path, 'w').close()
             continue
-
+        
         all_data.sort(key=lambda x: int(x['TimeStamp']))
 
         with open(output_file_path, 'w') as f:
@@ -303,11 +309,77 @@ def process_and_combine_data(folder1, folder2, output_folder):
 
 
 # --- Configuration ---
-source_folder1 = '../../DISCERN/data/legitimate/synflood/0/server-data'
-source_folder2 = '../../DISCERN/data/malicious/spread/0/compromised-data'
-output_folder_path = './synflood_spread_server_compromized'
-time_offset_file1 = 0
-time_offset_file2 = 0
+# source_folder1 = '../../DISCERN/data/legitimate/dnsmitm/0/cache-data'
+# source_folder2 = '../../DISCERN/data/malicious/upload/0/victim2-data'
+# output_folder_path = './../../DISCERN/data/merged/dnsmitm_upload/0/cache_victim2/'
+# time_offset_file1 = 0
+# time_offset_file2 = 0
 
-# --- Execution ---
-process_and_combine_data(source_folder1, source_folder2, output_folder_path)
+# # --- Execution ---
+# process_and_combine_data(source_folder1, source_folder2, output_folder_path)
+def main():
+    """
+    Main execution function to find subfolders, generate permutations,
+    and process them automatically.
+    """
+    # --- Configuration ---
+    parent_folder1 = '../../DISCERN/data/legitimate/synflood/0/'
+    parent_folder2 = '../../DISCERN/data/malicious/internetscanner/0/'
+    base_output_folder = '../../DISCERN/data/merged/'
+    
+    # Optional time offsets
+    time_offset_file1 = 0
+    time_offset_file2 = 0
+
+    # --- Automatic Path and Folder Generation ---
+    try:
+        # Extract descriptive names like 'dnsmitm' and 'upload' from the paths
+        name1 = os.path.basename(os.path.dirname(os.path.abspath(parent_folder1)))
+        name2 = os.path.basename(os.path.dirname(os.path.abspath(parent_folder2)))
+        # Extract common directory name, e.g., '0'
+        common_dir = os.path.basename(os.path.abspath(parent_folder1))
+    except Exception as e:
+        print(f"Could not automatically determine names from paths. Using placeholders. Error: {e}")
+        name1, name2, common_dir = "group1", "group2", ""
+
+    # Construct the specific output directory, e.g., ../../DISCERN/data/merged/dnsmitm_upload/0/
+    specific_output_base = os.path.join(base_output_folder, f"{name1}_{name2}", common_dir)
+
+    try:
+        subfolders1 = [d for d in os.listdir(parent_folder1) if os.path.isdir(os.path.join(parent_folder1, d)) and d != "summary"]
+        subfolders2 = [d for d in os.listdir(parent_folder2) if os.path.isdir(os.path.join(parent_folder2, d)) and d != "summary"]
+    except FileNotFoundError as e:
+        print(f"Error: Could not find one of the parent directories. Please check paths. {e}")
+        return
+
+    if not subfolders1 or not subfolders2:
+        print("Warning: One or both parent directories are empty or do not exist.")
+        return
+
+    # Generate all combinations (Cartesian product) of the subfolders
+    folder_permutations = list(itertools.product(subfolders1, subfolders2))
+    
+    print(f"Found {len(subfolders1)} subfolders in {parent_folder1}: {subfolders1}")
+    print(f"Found {len(subfolders2)} subfolders in {parent_folder2}: {subfolders2}")
+    print(f"Generated {len(folder_permutations)} total combinations to process.\n")
+
+    # --- Execution Loop ---
+    for i, (subfolder1, subfolder2) in enumerate(folder_permutations):
+        print(f"===== Starting Combination {i+1}/{len(folder_permutations)}: {subfolder1} + {subfolder2} =====")
+        
+        source_path1 = os.path.join(parent_folder1, subfolder1)
+        source_path2 = os.path.join(parent_folder2, subfolder2)
+        
+        # Construct the final output folder path, e.g., ../../merged/dnsmitm_upload/0/cache_victim2/
+        output_path = os.path.join(specific_output_base, f"{subfolder1[:-5]}_{subfolder2[:-5]}")
+        
+        print(f"  Source 1: {source_path1}")
+        print(f"  Source 2: {source_path2}")
+        print(f"  Output:   {output_path}\n")
+
+        # Call the main processing function with the generated paths and offsets
+        process_and_combine_data(source_path1, source_path2, output_path, time_offset_file1, time_offset_file2)
+        
+        print(f"===== Finished Combination: {subfolder1} + {subfolder2} =====\n")
+if __name__ == "__main__":
+    main()
