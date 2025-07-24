@@ -68,6 +68,11 @@ echo "Path $labpath lab $lab name $exp proj $proj";
 
 PATH=$PATH:/share
 
+if [ ! -f "./models/$lab.model" ]; then
+    echo "file ./models/$lab.model doesn't exist. please make it"
+    exit 1
+fi
+
 # load util functions
 . $SCRIPT_DIR/functions
 
@@ -140,7 +145,7 @@ if [[ -z $rev ]]; then
     echo No existing realization found.
     sleep 60
     echo Pushing new $lab model.
-    rev=$(mrg push $labpath/$lab/$lab.model $exp.$proj | head -1 | awk '{print $4}')
+    rev=$(mrg push ./models/$lab.model $exp.$proj | head -1 | awk '{print $4}')
     sleep 2
     runr mrg show revision $exp.$proj $rev
     if [[ $? -ne 0 ]]; then
