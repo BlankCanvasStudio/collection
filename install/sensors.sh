@@ -24,7 +24,7 @@ xdc=$(cat /etc/hostname | sed 's/-.*//')
 nodes="$@"
 
 if [ "$nodes" = "" ]; then
-    nodes=$(mrg show mat -j $(mrg list xdc -j | jq -r ".XDCs[] | select(.name==\"$xdc\") | .materialization" ) | grep node | awk '{print $2}' | sed 's/.$//' | sort | uniq | sed 's/"//g')
+    nodes=$(mrg show mat -j --comprehensive $(mrg list xdc -j | jq -r ".XDCs[] | select(.name==\"$xdc\") | .materialization" ) | grep node | awk '{print $2}' | sed 's/.$//' | sort | uniq | sed 's/"//g')
 fi
 
 # Copy the deb from the package registry

@@ -36,7 +36,7 @@ fi
 echo ""
 echo "building influx backup"
 echo ""
-ssh $fusioncore 'docker exec discerninflux sh -c "influx backup --token \"BIGElHSa291FOkrliGaBVc7ksnGgQ4vALbkfJzRuH02T2XB8qouH0H3IkYTJACE-XZ-QYV664CH5655LkbQDIQ\" /backup"'
+ssh $fusioncore 'docker exec discerninflux sh -c "influx backup --token \"<token>\" /backup"'
 ssh $fusioncore 'docker exec discerninflux sh -c "tar -czf /backup.tar.gz -C / backup"'
 
 # Copy gzipped backup to host

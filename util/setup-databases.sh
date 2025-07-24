@@ -71,7 +71,7 @@ docker run -d \
     --name discerninflux \
     -e DOCKER_INFLUXDB_INIT_MODE=setup \
     -e DOCKER_INFLUXDB_INIT_ORG=ISI \
-    -e DOCKER_INFLUXDB_INIT_ADMIN_TOKEN='BIGElHSa291FOkrliGaBVc7ksnGgQ4vALbkfJzRuH02T2XB8qouH0H3IkYTJACE-XZ-QYV664CH5655LkbQDIQ' \
+    -e DOCKER_INFLUXDB_INIT_ADMIN_TOKEN='' \
     -e DOCKER_INFLUXDB_INIT_BUCKET=empty \
     -e DOCKER_INFLUXDB_INIT_USERNAME=default-user \
     -e DOCKER_INFLUXDB_INIT_PASSWORD=something \
@@ -81,7 +81,8 @@ sleep 5
 
 echo "restoring database into discerninflux..."
 docker cp $location/influx-data.tar.gz discerninflux:/backup.tar.gz
-docker exec discerninflux sh -c "tar -xzf /backup.tar.gz -C / && influx restore --org ISI --token 'BIGElHSa291FOkrliGaBVc7ksnGgQ4vALbkfJzRuH02T2XB8qouH0H3IkYTJACE-XZ-QYV664CH5655LkbQDIQ' /backup"
+# docker exec discerninflux sh -c "tar -xzf /backup.tar.gz -C / && influx restore --org ISI --token '<token>' /backup"
+docker exec discerninflux sh -c "tar -xzf /backup.tar.gz -C / && influx restore --token '<token>' /backup"
 
 
 echo "setting up discernpsql container..."

@@ -10,7 +10,7 @@ measurement="log"
 
 # Set up the influx connection
 url = "http://10.10.10.4:8086"
-token = "BIGElHSa291FOkrliGaBVc7ksnGgQ4vALbkfJzRuH02T2XB8qouH0H3IkYTJACE-XZ-QYV664CH5655LkbQDIQ"
+token = ""
 org = "ISI"
 bucket = "DISCERN"
 
