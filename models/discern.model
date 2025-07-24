@@ -1,6 +1,6 @@
 from mergexp import *
 # create a topology named 'portscanner'
 net = Network('crypto', addressing==ipv4, routing==static)
-nodes = [ net.node(name, image == 'discern-debian', memory.capacity>=gb(4) for name in [ 'attacker' ] ]
+nodes = [ net.node(name, image == 'discern-debian', memory.capacity>=gb(4)) for name in [ 'attacker' ] ]
 
 experiment(net)
