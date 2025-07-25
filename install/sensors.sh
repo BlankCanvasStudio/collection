@@ -28,7 +28,7 @@ if [ "$nodes" = "" ]; then
 fi
 
 # Copy the deb from the package registry
-curl "https://gitlab.com/api/v4/projects/53927750/packages/generic/Ubuntu/$version/DataSorcerers.deb" --output $HOME/Sorcerers.deb
+curl "https://gitlab.com/api/v4/projects/53927750/packages/generic/Debian/$version/DataSorcerers.deb" --output $HOME/Sorcerers.deb
 
 for node in $nodes; do
     if [ "$node" = "ifr0" ]  || [ "$node" = "ifr1" ] || [ "$node" = "fusioncore" ]; then
