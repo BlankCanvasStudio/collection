@@ -11,7 +11,7 @@ function usage {
     return
 }
 
-OPTSTRING=":n:op:s"
+OPTSTRING=":n:op:s:x"
 
 # specify labname, assume password is stored in pass.txt file or $PASSWORD
 if [ $# -lt 1 ] ; then
