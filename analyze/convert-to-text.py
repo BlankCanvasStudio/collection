@@ -45,79 +45,79 @@ if os.path.exists(proc_new_data_file):
     os.remove(proc_new_data_file)
 
 
-# 
-# #
-# # Write the network data to file
-# #
-# 
-# query = f'''
-# from(bucket: "DISCERN")
-#   |> range(start: -1y)
-#   |> filter(fn: (r) => r["_measurement"] == "network")
-#   |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
-# '''
-# 
-# 
-# results = []
-# 
-# tables = query_api.query(query)
-# for table in tables:
-#     for record in table.records:
-#         dict_record = record.values
-#         del dict_record['result']
-#         del dict_record['table']
-#         # del dict_record['_value']
-#         # del dict_record['_field']
-#         del dict_record['_measurement']
-#         del dict_record['_start']
-#         del dict_record['_stop']
-#         results += [ dict_record ]
-# 
-# 
-# with open(network_data_file, 'w') as fd:
-#     for el in results:
-#         fd.write(json.dumps(el, default=str) + "\n")
-# 
-# 
-# 
-# #
-# # Write the cpu data to file
-# #
-# 
-# query = f'''
-# from(bucket: "DISCERN")
-#   |> range(start: -1y)
-#   |> filter(fn: (r) => r["_measurement"] == "cpu-load")
-#   |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
-# '''
-# 
-# 
-# results = []
-# 
-# query_api = client.query_api()
-# 
-# tables = query_api.query(query)
-# for table in tables:
-#     for record in table.records:
-#         dict_record = record.values
-#         del dict_record['result']
-#         del dict_record['table']
-#         # del dict_record['_field']
-#         del dict_record['_measurement']
-#         del dict_record['_start']
-#         del dict_record['_stop']
-#         results += [ dict_record ]
-# 
-# 
-# with open(cpu_data_file, 'w') as fd:
-#     for el in results:
-#         fd.write(json.dumps(el, default=str) + "\n")
-# 
-# 
 
 #
-# Write the interface data to file
+# Write the network data to file
 #
+
+query = f'''
+from(bucket: "DISCERN")
+  |> range(start: -1y)
+  |> filter(fn: (r) => r["_measurement"] == "network")
+  |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
+'''
+
+
+results = []
+
+tables = query_api.query(query)
+for table in tables:
+    for record in table.records:
+        dict_record = record.values
+        del dict_record['result']
+        del dict_record['table']
+        # del dict_record['_value']
+        # del dict_record['_field']
+        del dict_record['_measurement']
+        del dict_record['_start']
+        del dict_record['_stop']
+        results += [ dict_record ]
+
+
+with open(network_data_file, 'w') as fd:
+    for el in results:
+        fd.write(json.dumps(el, default=str) + "\n")
+
+
+
+#
+# Write the cpu data to file
+#
+
+query = f'''
+from(bucket: "DISCERN")
+  |> range(start: -1y)
+  |> filter(fn: (r) => r["_measurement"] == "cpu-load")
+  |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
+'''
+
+
+results = []
+
+query_api = client.query_api()
+
+tables = query_api.query(query)
+for table in tables:
+    for record in table.records:
+        dict_record = record.values
+        del dict_record['result']
+        del dict_record['table']
+        # del dict_record['_field']
+        del dict_record['_measurement']
+        del dict_record['_start']
+        del dict_record['_stop']
+        results += [ dict_record ]
+
+
+with open(cpu_data_file, 'w') as fd:
+    for el in results:
+        fd.write(json.dumps(el, default=str) + "\n")
+
+
+
+
+Write the interface data to file
+
 
 query = f'''
 from(bucket: "DISCERN")
@@ -150,132 +150,113 @@ with open(interface_data_file, 'w') as fd:
         fd.write(json.dumps(el, default=str) + "\n")
 
 
-# 
-# #
-# # Write the file data to file
-# #
-# 
-# """
-# query = f'''
-# from(bucket: "DISCERN")
-#   |> range(start: -1y)
-#   |> filter(fn: (r) => r["_measurement"] == "file-hash")
-#   |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
-# '''
-# 
-# 
-# results = []
-# 
-# query_api = client.query_api()
-# 
-# tables = query_api.query(query)
-# for table in tables:
-#     for record in table.records:
-#         dict_record = record.values
-#         del dict_record['result']
-#         del dict_record['table']
-#         # del dict_record['_field']
-#         del dict_record['_measurement']
-#         # del dict_record['_value']
-#         del dict_record['_start']
-#         del dict_record['_stop']
-#         results += [ dict_record ]
-# 
-# 
-# with open(file_data_file, 'w') as fd:
-#     for el in results:
-#         fd.write(json.dumps(el, default=str) + "\n")
-# 
-# """
-# 
-# 
-# #
-# # Write the proc-mem data to file
-# #
-# 
-# query = f'''
-# from(bucket: "DISCERN")
-#   |> range(start: -1y)
-#   |> filter(fn: (r) => r["_measurement"] == "proc-mem")
-#   |> pivot(rowKey: ["_time", "Pid"], columnKey: ["_field"], valueColumn: "_value")
-# '''
-# 
-# 
-# results = []
-# 
-# query_api = client.query_api()
-# 
-# tables = query_api.query(query)
-# # tables = query_api.query_data_frame(query)
-# for table in tables:
-#     for record in table.records:
-#         dict_record = record.values
-#         del dict_record['result']
-#         del dict_record['table']
-#         # del dict_record['_field']
-#         del dict_record['_measurement']
-#         # del dict_record['_value']
-#         del dict_record['_start']
-#         del dict_record['_stop']
-#         results += [ dict_record ]
-# 
-# 
-# with open(proc_mem_data_file, 'w') as fd:
-#     for el in results:
-#         fd.write(json.dumps(el, default=str) + "\n")
-# 
-#  
-# 
-# #
-# # Write the proc-new data to file
-# #
-# 
-# query = f'''
-# from(bucket: "DISCERN")
-#   |> range(start: -1y)
-#   |> filter(fn: (r) => r["_measurement"] == "proc-new")
-#   |> pivot(rowKey: ["_time", "Pid"], columnKey: ["_field"], valueColumn: "_value")
-# '''
-# 
-# 
-# results = []
-# 
-# query_api = client.query_api()
-# 
-# tables = query_api.query(query)
-# for table in tables:
-#     for record in table.records:
-#         dict_record = record.values
-#         del dict_record['result']
-#         del dict_record['table']
-#         # del dict_record['_field']
-#         del dict_record['_measurement']
-#         # del dict_record['_value']
-#         del dict_record['_start']
-#         del dict_record['_stop']
-#         results += [ dict_record ]
-# 
-# 
-# with open(proc_new_data_file, 'w') as fd:
-#     for el in results:
-#         fd.write(json.dumps(el, default=str) + "\n")
-# 
+
+#
+# Write the file data to file
+#
+
+"""
+query = f'''
+from(bucket: "DISCERN")
+  |> range(start: -1y)
+  |> filter(fn: (r) => r["_measurement"] == "file-hash")
+  |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
+'''
 
 
+results = []
+
+query_api = client.query_api()
+
+tables = query_api.query(query)
+for table in tables:
+    for record in table.records:
+        dict_record = record.values
+        del dict_record['result']
+        del dict_record['table']
+        # del dict_record['_field']
+        del dict_record['_measurement']
+        # del dict_record['_value']
+        del dict_record['_start']
+        del dict_record['_stop']
+        results += [ dict_record ]
 
 
+with open(file_data_file, 'w') as fd:
+    for el in results:
+        fd.write(json.dumps(el, default=str) + "\n")
+
+"""
 
 
+#
+# Write the proc-mem data to file
+#
+
+query = f'''
+from(bucket: "DISCERN")
+  |> range(start: -1y)
+  |> filter(fn: (r) => r["_measurement"] == "proc-mem")
+  |> pivot(rowKey: ["_time", "Pid"], columnKey: ["_field"], valueColumn: "_value")
+'''
 
 
+results = []
+
+query_api = client.query_api()
+
+tables = query_api.query(query)
+# tables = query_api.query_data_frame(query)
+for table in tables:
+    for record in table.records:
+        dict_record = record.values
+        del dict_record['result']
+        del dict_record['table']
+        # del dict_record['_field']
+        del dict_record['_measurement']
+        # del dict_record['_value']
+        del dict_record['_start']
+        del dict_record['_stop']
+        results += [ dict_record ]
 
 
+with open(proc_mem_data_file, 'w') as fd:
+    for el in results:
+        fd.write(json.dumps(el, default=str) + "\n")
+
+ 
+
+#
+# Write the proc-new data to file
+#
+
+query = f'''
+from(bucket: "DISCERN")
+  |> range(start: -1y)
+  |> filter(fn: (r) => r["_measurement"] == "proc-new")
+  |> pivot(rowKey: ["_time", "Pid"], columnKey: ["_field"], valueColumn: "_value")
+'''
 
 
+results = []
+
+query_api = client.query_api()
+
+tables = query_api.query(query)
+for table in tables:
+    for record in table.records:
+        dict_record = record.values
+        del dict_record['result']
+        del dict_record['table']
+        # del dict_record['_field']
+        del dict_record['_measurement']
+        # del dict_record['_value']
+        del dict_record['_start']
+        del dict_record['_stop']
+        results += [ dict_record ]
 
 
-
-
-
-
+with open(proc_new_data_file, 'w') as fd:
+    for el in results:
+        fd.write(json.dumps(el, default=str) + "\n")
 
