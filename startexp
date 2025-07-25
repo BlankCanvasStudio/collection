@@ -11,7 +11,7 @@ function usage {
     return
 }
 
-OPTSTRING=":n:op:s:x"
+OPTSTRING=":n:op:sx"
 
 # specify labname, assume password is stored in pass.txt file or $PASSWORD
 if [ $# -lt 1 ] ; then
@@ -31,38 +31,36 @@ run=0
 labpath="/share/education"
 org=""
 exfiltrate=false
-while getopts ${OPTSTRING} opt; do
-  case ${opt} in
-      o)
-        org="-o"
-        labpath="/organization"
-        if [ $exp == $lab ] ; then
-            exp=$lab$user
-        fi
-        ;;
+while getopts "$OPTSTRING" opt; do
+  case "$opt" in
+    o)
+      org="-o"
+      labpath="/organization"
+      ;;
     n)
-        exp=${OPTARG}
-        ;;
+      exp="$OPTARG"
+      ;;
     p)
-        proj=${OPTARG}
-        ;;
-    :)
-        echo "Option ${OPTARG} requires an argument"
-        usage
-        exit 1
-        ;;
+      proj="$OPTARG"
+      ;;
     s)
-        run=1
-        ;;
-    x) 
-        exfiltrate=true
-        ;;
+      run=1
+      ;;
+    x)
+      echo "hit the exfiltrate case"
+      exfiltrate=true
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument"
+      usage
+      exit 1
+      ;;
     ?)
-        echo "Invalid option =${OPTARG}"
-        usage
-        exit 1
-        ;;
-    esac
+      echo "Invalid option: -$OPTARG"
+      usage
+      exit 1
+      ;;
+  esac
 done
 echo "Path $labpath lab $lab name $exp proj $proj";
 

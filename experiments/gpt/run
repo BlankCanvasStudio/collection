@@ -1,8 +1,8 @@
 #!/bin/bash
 
-ssh learner "sudo apt-get install -y git python3-pip"
+ssh learner "sudo apt-get install -y git python3-pip --fix-missing"
 sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
-ssh learner "sudo apt install -y docker.io"
+ssh learner "sudo apt install -y docker.io --fix-missing"
 sleep $(awk -v min=30 -v max=120 'BEGIN{srand(); print min+rand()*(max-min)}')
 
 sleep 3
