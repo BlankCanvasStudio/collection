@@ -1,0 +1,10 @@
+from mergexp import *
+# create a topology named 'portscanner'
+net = Network('bullseye-edu', addressing==ipv4, routing==static)
+
+nodes = [ net.node(name, image == 'bullseye-edu') for name in [ 'attacker', 'a', 'b', 'c', 'd' ] ]
+
+net.connect(nodes)
+
+
+experiment(net)

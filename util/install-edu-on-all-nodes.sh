@@ -2,7 +2,7 @@
 
 set -e
 
-version="5.0.10"
+version="5.0.12"
 
 show_help() {
     echo "Usage: ./install-sensors-xdc.sh [flags] [optional: nodes]"
@@ -28,7 +28,7 @@ if [ "$nodes" = "" ]; then
 fi
 
 # Copy the deb from the package registry
-curl "https://gitlab.com/api/v4/projects/53927750/packages/generic/Ubuntu/$version/DataSorcerers.deb" --output $HOME/Sorcerers.deb
+curl "https://gitlab.com/api/v4/projects/53927750/packages/generic/Debian/$version/DiscernEdu.deb" --output $HOME/Sorcerers.deb
 
 for node in $nodes; do
     if [ "$node" = "ifr0" ]  || [ "$node" = "ifr1" ] || [ "$node" = "fusioncore" ]; then
@@ -50,3 +50,4 @@ for node in $nodes; do
 done
 
 wait
+
