@@ -2,7 +2,7 @@
 
 set -e
 
-version="5.0.10"
+version="5.0.12"
 
 show_help() {
     echo "Usage: ./install-core.sh [flags] <node>"
@@ -37,7 +37,7 @@ if [ ! "$@" = "" ]; then
 fi
 
 # Download the fusion core debian
-curl "https://gitlab.com/api/v4/projects/53927750/packages/generic/Ubuntu/$version/FusionCore.deb" --output $HOME/FusionCore.deb
+curl "https://gitlab.com/api/v4/projects/53927750/packages/generic/Debian/$version/FusionCore.deb" --output $HOME/FusionCore.deb
 
 echo "waiting for ssh on $node"
 until ssh -o BatchMode=yes $node 'echo ssh up' 2> /dev/null; do sleep 1; done
